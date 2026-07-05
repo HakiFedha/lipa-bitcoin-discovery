@@ -54,6 +54,7 @@ export interface ServiceListing {
   ttl?: string | number;
   protocols?: string;
   kyc?: Kyc;
+  lnaddr?: string;
   metadata?: Record<string, unknown>;
 }
 
@@ -82,6 +83,7 @@ export interface Provider {
   ttl: string | null;
   protocols: string[];
   kyc: Kyc | null;
+  lnaddr: string | null;
   metadata: Record<string, unknown>;
   healthData?: HealthData;
 }

@@ -22,6 +22,7 @@
     ["speed", "seconds"],
     ["ttl", "90000"],
     ["protocols", "bolt11,nwc,lnurl"],
+    ["lnaddr", "{phone}@example.com"],
     ["kyc", "none"]
   ],
   "content": "{\"description\":\"Lightning to M-Pesa off-ramp\"}",

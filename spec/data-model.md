@@ -76,6 +76,11 @@ Default: `90000` (25 hours)
 #### `protocols` — Lightning protocol support
 Comma-separated: `bolt11`, `bolt12`, `nwc`, `lnurl`, `webln`, `keysend`
 
+Including `lnurl` is a claim of conformance to the [off-ramp LNURL settlement profile](settlement-lnurl.md): a hold-invoice-backed Lightning Address off-ramp with LUD-21 delivery confirmation.
+
+#### `lnaddr` — Lightning Address template (optional)
+For providers conforming to the LNURL off-ramp profile. A template telling wallets how to construct the destination address, e.g. `{phone}@example.com` (username = recipient phone number). Lets a wallet go straight from discovery to payment.
+
 #### `kyc` — KYC requirements
 `none`, `light` (phone number), `full` (government ID)
 
