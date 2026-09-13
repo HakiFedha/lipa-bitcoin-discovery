@@ -1,7 +1,7 @@
 {
-  "name": "afri-bitcoin-discovery",
+  "name": "lipa-bitcoin-discovery",
   "version": "0.1.0",
-  "description": "Open protocol for discovering Bitcoin payment services across Africa. Publish, discover, and attest providers on Nostr.",
+  "description": "Open reference implementation for discovering Bitcoin payment services across Africa.",
   "main": "src/index.js",
   "scripts": {
     "test": "node test/run.js",
@@ -20,15 +20,15 @@
     "service-discovery",
     "payments"
   ],
-  "author": "Africa Bitcoin Payment Alliance",
+  "author": "HakiFedha",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/bmosha00/african-bitcoin-service-discovery-Bitcoin-open-.git"
+    "url": "https://github.com/HakiFedha/lipa-bitcoin-discovery.git"
   },
   "dependencies": {
-    "nostr-tools": "^2.23.8",
     "@noble/hashes": "^1.7.2",
+    "nostr-tools": "^2.23.8",
     "ws": "^8.18.0"
   },
   "engines": {
