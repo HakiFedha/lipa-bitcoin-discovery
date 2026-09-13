@@ -1,4 +1,4 @@
-# afri-bitcoin-discovery
+# lipa-bitcoin-discovery
 
 Open protocol for discovering Bitcoin payment services across Africa. Publish a service listing, discover providers, and attest trust — all on [Nostr](https://nostr.com), no servers of your own, no API keys, no registration.
 
@@ -20,8 +20,8 @@ cd lib
 npm install
 ```
 
-> Once the package is published to npm, this becomes `npm install afri-bitcoin-discovery`.
-> The examples below import `afri-bitcoin-discovery` (the published name). Until it's on npm,
+> Once the package is published to npm, this becomes `npm install lipa-bitcoin-discovery`.
+> The examples below import `lipa-bitcoin-discovery` (the published name). Until it's on npm,
 > if you're running code from inside this repo, swap that for `require('./src')`.
 
 Requires Node.js 18 or newer.
@@ -62,7 +62,7 @@ echo "NOSTR_PRIVATE_KEY=a1b2c3d4..." >> .env
 Advertise your service so any wallet or provider can find you. Only the required fields are mandatory; the rest sharpen ranking and matching.
 
 ```js
-const { Publisher } = require('afri-bitcoin-discovery');
+const { Publisher } = require('lipa-bitcoin-discovery');
 
 const publisher = new Publisher({ privateKey: process.env.NOSTR_PRIVATE_KEY });
 
@@ -100,7 +100,7 @@ The listing is signed with your private key and pushed to three public relays (D
 Any wallet, app, or provider can query the directory. No key required.
 
 ```js
-const { Querier } = require('afri-bitcoin-discovery');
+const { Querier } = require('lipa-bitcoin-discovery');
 
 const querier = new Querier();
 
@@ -130,7 +130,7 @@ Shortcuts: `findByCountry('KE')`, `findOffRamp('TZ', 'm-pesa')`, `findOnRamp('TZ
 Discovery without trust is a spam list. Providers vouch for each other; consumers rank by the resulting trust score.
 
 ```js
-const { Attestation } = require('afri-bitcoin-discovery');
+const { Attestation } = require('lipa-bitcoin-discovery');
 
 const attestation = new Attestation({ privateKey: process.env.NOSTR_PRIVATE_KEY });
 

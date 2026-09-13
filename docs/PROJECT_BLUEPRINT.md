@@ -207,13 +207,13 @@ Provider A receives a request it can't fulfil locally. It queries the directory 
 
 ## What We're Building — The npm Package
 
-The protocol spec describes the rules. The npm package (`afri-bitcoin-discovery`) is the tool that any provider uses to participate. It has three modules:
+The protocol spec describes the rules. The npm package (`lipa-bitcoin-discovery`) is the tool that any provider uses to participate. It has three modules:
 
 ### Publisher
 Any provider imports it, configures their service details, and publishes to all three relays.
 
 ```javascript
-const { Publisher } = require('afri-bitcoin-discovery');
+const { Publisher } = require('lipa-bitcoin-discovery');
 const publisher = new Publisher({ privateKey, relays });
 await publisher.publish(myServiceListing);
 ```
@@ -222,7 +222,7 @@ await publisher.publish(myServiceListing);
 Any wallet or provider imports it to find services across Africa.
 
 ```javascript
-const { Querier } = require('afri-bitcoin-discovery');
+const { Querier } = require('lipa-bitcoin-discovery');
 const querier = new Querier({ relays });
 const providers = await querier.find({ country: 'TZ', direction: 'off-ramp' });
 ```
@@ -231,7 +231,7 @@ const providers = await querier.find({ country: 'TZ', direction: 'off-ramp' });
 Any provider imports it to vouch for partners or check trust scores.
 
 ```javascript
-const { Attestation } = require('afri-bitcoin-discovery');
+const { Attestation } = require('lipa-bitcoin-discovery');
 const attestation = new Attestation({ privateKey, relays });
 await attestation.vouch(partnerPubkey, { rating: 'reliable' });
 const score = await attestation.score(providerPubkey);
@@ -357,7 +357,7 @@ african-bitcoin-service-discovery-Bitcoin-open-/
 │   ├── wallet-query-flow.json        # Complete query sequence
 │   └── provider-to-provider-flow.json # Cross-border routing example
 │
-└── lib/                              # npm package (afri-bitcoin-discovery)
+└── lib/                              # npm package (lipa-bitcoin-discovery)
     ├── package.json                  # Package config and dependencies
     ├── .gitignore                    # node_modules, .env
     ├── src/

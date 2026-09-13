@@ -1,4 +1,4 @@
-// Type definitions for afri-bitcoin-discovery
+// Type definitions for lipa-bitcoin-discovery
 // Open protocol for discovering Bitcoin payment services across Africa.
 
 export type Direction = 'off-ramp' | 'on-ramp' | 'both';
