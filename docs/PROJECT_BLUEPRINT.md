@@ -1,447 +1,753 @@
-# African Bitcoin Payment Service Discovery Protocol
-## Project Blueprint — What We're Building, Why, and How
+# Lipa Bitcoin Discovery: Project Blueprint
+
+## 1. Overview
+
+Lipa Bitcoin Discovery is open infrastructure for discovering Bitcoin payment services across Africa.
+
+The project defines a common service description and discovery protocol that allows Bitcoin payment providers, wallets, applications, directories and other software to discover relevant services without requiring a central registration authority.
+
+The core principle is:
+
+> **Discovery is open. Trust is configurable. Settlement is separate.**
+
+The protocol is designed for African payment rails and currencies while remaining extensible to other markets, providers and discovery mechanisms.
+
+Lipa Bitcoin Discovery is transport-independent. Nostr is an initial reference transport, but the protocol does not require Nostr. Other transports, including HTTP APIs and future discovery mechanisms, can carry compatible discovery information.
 
 ---
 
-## The Problem We're Solving
+## 2. The Problem We're Solving
 
-Today, moving Bitcoin across African borders requires knowing someone who knows someone. A Lightning wallet that wants to send money to an M-Pesa account in Tanzania has no way to automatically find a service that can do this. The wallet developer must already know that a specific company exists, what it supports, and how to reach it.
+Bitcoin payment services across Africa are difficult for software to discover reliably.
 
-This is the bottleneck for cross-border Bitcoin payments in Africa.
+A provider may support:
 
-There are companies across the continent that can handle these payments — off-ramp providers in Tanzania, Kenya, South Africa, Nigeria, Ghana, and more. But there is no shared directory. No way for a wallet to ask "who handles M-Pesa in Tanzania?" and get an answer.
+- Lightning
+- on-chain Bitcoin
+- ecash
+- LNURL
+- M-Pesa
+- MTN Mobile Money
+- Airtel Money
+- Orange Money
+- bank transfers
+- cash
+- local currencies
 
-We are building that directory.
+But information about these services is often scattered across websites, social media, applications, private relationships and closed integrations.
 
----
+A human directory can help people find services, but wallets and other applications need machine-readable information that they can query programmatically.
 
-## What We're Building
+For example, a wallet should be able to ask:
 
-An open, decentralised protocol that lets any Bitcoin payment company in Africa advertise its services, and any wallet, app, or other provider discover them automatically.
+> "Who can help me sell Bitcoin for Tanzanian shillings through M-Pesa?"
 
-Think of it like DNS for payments. DNS turns "google.com" into an IP address. Our protocol turns "off-ramp, Tanzania, M-Pesa" into a list of providers that can handle it — ranked by trust, checked for liveness, ready to transact.
+and receive relevant service providers without the wallet developer having to know every provider in advance.
 
-### Key Properties
-
-- **Open** — Any company can publish a listing. Any wallet can query. No permission, no API keys, no registration.
-- **Decentralised** — Built on Nostr relays. No single server controls the directory. If one relay goes down, others still serve the data.
-- **Trust without centralisation** — Providers vouch for each other through signed attestation events. Trust grows organically through working relationships, not through a central authority.
-- **Privacy-preserving** — Fee ranges not exact fees. Capability not capacity. Enough to be found, not enough to leak competitive intelligence.
-- **Settlement out of scope** — The protocol introduces parties. How value actually moves is negotiated directly between them.
-
-### The Critical Insight: Providers Are Also Consumers
-
-A wallet discovering a provider is the obvious use case. But the real power is provider-to-provider routing. When Provider A in Tanzania receives a request to send money to Kenya, it queries the directory, finds Provider B in Kenya, and routes the Kenyan leg through Provider B's API. The user sees one transaction. Two providers collaborated behind the scenes.
-
-No single provider needs to cover every country. The directory is the glue — providers discover each other automatically and chain together to serve corridors neither could handle alone.
+Lipa Bitcoin Discovery addresses this gap by defining an open way for services to describe themselves and for software to discover those services.
 
 ---
 
-## How It Works — Four Layers
+## 3. What We're Building
 
+Lipa Bitcoin Discovery is an open discovery protocol, not a single central directory and not a Nostr-only network.
+
+The protocol has two fundamental parts:
+
+1. **Service Description** — a common way to describe what a provider offers.
+2. **Discovery** — mechanisms through which software can find those descriptions.
+
+The same underlying service information should be usable through different discovery transports.
+
+Conceptually:
+
+```text
+                    LIPA BITCOIN DISCOVERY
+                              │
+                     OPEN DISCOVERY PROTOCOL
+                              │
+              ┌───────────────┴────────────────┐
+              │                                │
+       SERVICE DESCRIPTION                DISCOVERY
+       What does it offer?                How is it found?
+                                               │
+                                ┌──────────────┼──────────────┐
+                                │              │              │
+                              Nostr         HTTP/API        Future
+                             transport      transport      transports
+
+
+              ┌──────────────────────────────────────────────┐
+              │              SEPARATE CONCERNS                │
+              │                                              │
+              │  Trust Signals              Settlement       │
+              │  Application-configured      Actual           │
+              │  trust decisions             transaction      │
+              │  and evaluation              between parties  │
+              └──────────────────────────────────────────────┘
+
+## 4. Core Concepts
+
+### Service Provider
+
+A service provider is an organisation, business, community service or individual that offers a Bitcoin-related payment service.
+
+A provider may offer one or more combinations of Bitcoin rails, local payment rails, currencies and directions.
+
+### Service Description
+
+A service description is the machine-readable representation of what a provider offers.
+
+It can include:
+
+- provider identity
+- service name
+- country
+- supported currencies
+- transaction direction
+- Bitcoin rail
+- local payment rail
+- supported protocols
+- limits
+- fees
+- KYC requirements
+- service endpoint
+- contact information
+- additional metadata
+
+### Discovery Transport
+
+A discovery transport is a mechanism through which a consumer finds service descriptions.
+
+The protocol does not require one transport.
+
+Examples include:
+
+- Nostr
+- HTTP/API
+- provider-hosted discovery
+- directories and indexes
+- future decentralised or federated mechanisms
+
+### Consumer
+
+A consumer is software that wants to discover services.
+
+Examples include:
+
+- Bitcoin wallets
+- payment applications
+- exchanges
+- directories
+- merchant tools
+- other service providers
+
+### Trust Signal
+
+A trust signal is information that helps a consumer evaluate a discovered provider.
+
+Signals may include:
+
+- attestations from other entities
+- successful health checks
+- recent activity
+- external verification
+- application-specific reputation
+- directory curation
+
+Trust is not a single mandatory score. Different applications may make different trust decisions.
+
+### Settlement
+
+Settlement is the actual transaction between a user and a provider.
+
+Settlement may happen through Lightning, on-chain Bitcoin, ecash, mobile money, bank transfers, cash or another supported rail.
+
+Settlement is outside the core discovery protocol.
+
+## 5. Discovery Transports
+
+The protocol separates the information being discovered from the mechanism used to discover it.
+
+### Nostr
+
+Nostr is the first reference transport.
+
+The current implementation represents service listings and related trust information using Nostr events.
+
+Nostr provides a decentralised way for providers to publish information without requiring a central registration authority.
+
+However, a provider does not need to use Nostr to participate in the wider discovery protocol.
+
+### HTTP/API
+
+An HTTP or API transport can expose compatible service descriptions through ordinary web infrastructure.
+
+This allows wallets and applications that do not use Nostr to participate in discovery.
+
+An API may support queries such as:
+
+- country
+- currency
+- direction
+- Bitcoin rail
+- local payment rail
+- service type
+
+### Provider-Hosted Discovery
+
+A provider may publish its own service description at a predictable web location.
+
+A future specification could define mechanisms such as a `.well-known` resource for this purpose.
+
+This would allow software to discover information directly from a provider without requiring the provider to register with a central directory.
+
+### Directory and Index
+
+A directory or index can collect and publish service descriptions from multiple providers.
+
+Directories may be:
+
+- centralised
+- federated
+- community-operated
+- curated
+- automatically generated
+
+A directory is a discovery mechanism, not the protocol itself.
+
+### Future Transports
+
+The protocol should remain open to additional discovery mechanisms.
+
+New transports should map their data into the common service description rather than creating incompatible provider formats.
+
+## 6. Service Description Data Model
+
+The service description should be sufficiently structured for software to query and compare providers while remaining extensible.
+
+A conceptual representation is:
+
+```text
+Provider
+ ├── identity
+ ├── service_id
+ ├── name
+ ├── country
+ ├── direction
+ ├── currencies
+ ├── bitcoin_rails
+ ├── local_rails
+ ├── protocols
+ ├── limits
+ ├── fees
+ ├── kyc
+ ├── endpoint
+ ├── contact
+ └── metadata
+
+## 7. Nostr Reference Implementation
+
+The existing Nostr implementation provides the first working transport for the discovery protocol.
+
+The current reference model uses:
+
+- **Kind 38383** for service listings
+- **Kind 38384** for attestations
+- **Kind 38385** for revocations
+
+These event kinds describe how the protocol is represented on Nostr. They are not requirements for implementations using other transports.
+
+The Nostr implementation includes components for:
+
+- publishing service listings
+- querying listings
+- publishing attestations
+- recording revocations
+- checking provider health
+- evaluating trust-related signals
+
+The Nostr transport should remain interoperable with the wider protocol while being replaceable by other discovery transports.
+
+## 8. Trust and Verification
+
+Discovery tells software that a service exists. It does not automatically establish that the service is trustworthy.
+
+Trust should therefore be represented through signals that applications can evaluate according to their own requirements.
+
+Possible signals include:
+
+- attestations from other providers or trusted entities
+- successful health checks
+- recent service activity
+- external verification
+- directory curation
+- application-specific reputation
+
+A provider may also expose a health endpoint or other mechanism that allows software to check whether the service is currently responding.
+
+A signal such as **Verified Active Recently** should indicate recent observed activity, not guarantee that a provider is safe, solvent or continuously available.
+
+The protocol should not require one universal trust score. Different wallets, directories and applications may have different risk models and therefore different trust requirements.
+
+## 9. Discovery Query Model
+
+Consumers should be able to describe the service they are looking for using common query fields.
+
+A conceptual query may include:
+
+- country
+- direction
+- currency
+- local payment rail
+- Bitcoin rail
+- service type
+
+For example:
+
+> Find providers in Tanzania that allow a user to sell Bitcoin for TZS through M-Pesa.
+
+A consumer can then use one or more available discovery transports to find matching service descriptions.
+
+The general flow is:
+
+```text
+Consumer defines requirements
+          │
+          ▼
+Select available discovery transports
+          │
+          ▼
+Retrieve candidate services
+          │
+          ▼
+Normalise service descriptions
+          │
+          ▼
+Filter by requirements
+          │
+          ▼
+Evaluate trust signals
+          │
+          ▼
+Optionally check current availability
+          │
+          ▼
+Present or use suitable providers
 ```
-┌─────────────────────────────────────────────────────────┐
-│  Layer 1 — Providers                                    │
-│  Provider A · Provider B · Provider C · Provider D · ...│
-│  Each publishes a signed service listing                │
-│  Providers are also consumers (cross-border)            │
-└──────────┬──────────────────────────────┬───────────────┘
-           │ signed Nostr events          │ query for other providers
-┌──────────▼──────────────────────────────▼───────────────┐
-│  Layer 2 — Discovery Relay Network                      │
-│  Nostr relays (relay.damus.io, relay.nostr.band,        │
-│  nos.lol). No single point of control.                  │
-└──────────────────────┬──────────────────────────────────┘
-                       │ query + filter
-┌──────────────────────▼──────────────────────────────────┐
-│  Layer 3 — Attestation (Web of Trust)                   │
-│  Providers vouch for each other via signed events.      │
-│  More attestations = higher trust score.                │
-└──────────────────────┬──────────────────────────────────┘
-                       │ ranked results
-┌──────────────────────▼──────────────────────────────────┐
-│  Layer 4 — Consumers                                    │
-│  Wallet A · Wallet B · Wallet C · Wallet D · ...        │
-│  Provider A queries for Provider B (cross-border)       │
-│  Any app, wallet, or provider can query.                │
-└─────────────────────────────────────────────────────────┘
+
+This allows the consumer to remain independent of any single discovery mechanism.
+
+## 10. Example Wallet Flow
+
+Consider a person using a Bitcoin wallet who wants to sell Bitcoin for Tanzanian shillings through M-Pesa.
+
+The wallet could construct a discovery query containing:
+
+- country: Tanzania
+- currency: TZS
+- direction: off-ramp
+- Bitcoin rail: Lightning or on-chain
+- local rail: M-Pesa
+
+The wallet could then query one or more discovery transports.
+
+It might discover several providers and evaluate their available trust and availability signals.
+
+The wallet can then present suitable providers to the person, who decides which service to use.
+
+The discovery protocol does not require the wallet to become a Nostr application. A wallet could use an HTTP API, a directory, Nostr or another compatible transport.
+
+The protocol also does not require the wallet developer to know every provider in advance.
+
+## 11. Provider-to-Provider Discovery
+
+Providers are also consumers of discovery information.
+
+A provider may need to discover another provider in order to:
+
+- route a customer to another country
+- support a currency it does not directly handle
+- find a local payment rail
+- establish a cross-border relationship
+- coordinate liquidity or settlement services
+
+For example, a provider serving users in Zambia may discover a Tanzanian provider that supports TZS and M-Pesa.
+
+This makes discovery useful not only for wallets and end users, but also for interoperability between payment services.
+
+
+## 12. Lipa Directory and Discovery
+
+The existing Lipa Bitcoin directory and Lipa Bitcoin Discovery serve complementary purposes.
+
+The directory is primarily a human-facing resource. It helps people find and compare Bitcoin services across African markets.
+
+Lipa Bitcoin Discovery is primarily a machine-facing interoperability layer. It allows wallets, applications, providers and other software to discover structured service information programmatically.
+
+The two can therefore exist side by side.
+
+The directory may use discovery data, publish curated service descriptions, or link to providers discovered through the protocol. At the same time, discovery does not depend on the Lipa directory being the central authority.
+
+This distinction is important because a human directory and an open discovery protocol solve different problems.
+
+## 13. Implementation Direction
+
+The existing repository contains a working Nostr-based reference implementation.
+
+The next architectural step is to separate the protocol core from individual discovery transports.
+
+The intended direction is approximately:
+
+```text
+lib/
+ ├── core/
+ │    ├── service-description
+ │    ├── query
+ │    └── validation
+ │
+ ├── transports/
+ │    ├── nostr/
+ │    ├── http/
+ │    └── future/
+ │
+ ├── trust/
+ │    └── signals
+ │
+ └── index.ts
+
+docs/
+ ├── protocol/
+ ├── examples/
+ └── PROJECT_BLUEPRINT.md
 ```
 
-### Layer 1: Providers
+The exact repository structure may change as the implementation develops. The architectural separation is the important part.
 
-Any African Bitcoin payment company publishes a signed Nostr event (kind 38383) describing what it can do — country, direction (on-ramp/off-ramp), payment rails (Lightning, M-Pesa, MTN MoMo), limits, fees, speed, and an API endpoint.
+The core should define common service descriptions, queries and validation rules without depending on Nostr-specific libraries.
 
-The listing is signed with the provider's Nostr private key, so nobody can fake it.
+Each transport should translate between the common protocol model and its own representation.
 
-### Layer 2: Discovery Relay Network
+## 14. Existing Nostr Implementation Findings
 
-Listings are published to Nostr relays — servers that store and serve Nostr events. We use three public relays for redundancy: relay.damus.io, relay.nostr.band, nos.lol. If one goes down, the other two still serve the data.
+The existing implementation has provided useful practical lessons for the protocol design.
 
-No single entity controls these relays. No registration required. No API keys.
+### Relay Indexing
 
-Later, the alliance may operate dedicated African relays (Nairobi, Lagos, Johannesburg) for better performance, but public relays work today at zero cost.
+Some public Nostr relays may not index custom multi-character tags in a way that makes server-side filtering reliable.
 
-### Layer 3: Attestation (Web of Trust)
+Client-side filtering may therefore be necessary when using certain relays.
 
-Discovery without trust is a spam list. Anyone can publish a listing claiming to handle M-Pesa in Tanzania. Attestations solve this.
+### Event Kind Compatibility
 
-An attestation is a signed Nostr event (kind 38384) where one provider vouches for another: "We have worked with this provider and they are reliable." When a wallet queries for providers, it also fetches attestations. More attestations from known providers = higher trust ranking.
+The current use of Kind 38383 needs to be treated as a Nostr transport detail because that kind may also be used by other Nostr applications.
 
-Revocations (kind 38385) handle the opposite case — withdrawing trust from a provider found to be unreliable.
+The wider protocol should not make the event kind itself part of the universal service identity.
 
-### Layer 4: Consumers
+### Provider Identity
 
-Any wallet, app, or provider can query the directory. Send a Nostr filter to any relay, get back matching providers, check attestations, ping the health endpoint, and route the transaction. The entire discovery process takes less than 2 seconds. The user never sees it.
+A Nostr transport can identify a provider through a Nostr keypair.
 
----
+Other transports may use different identities, such as HTTPS domains, API credentials, signed documents or directory records.
 
-## The Three Nostr Event Kinds
+Provider identity should therefore be transport-aware rather than requiring every provider to have a Nostr identity.
 
-| Kind | Name | Purpose |
-|------|------|---------|
-| 38383 | Service Listing | "Here's what I can do" — a provider's advertisement |
-| 38384 | Attestation | "I vouch for this provider" — trust signal from one provider to another |
-| 38385 | Revocation | "I no longer trust this provider" — trust withdrawal |
+## 15. Current Nostr Implementation
 
-All three are parameterized replaceable events (NIP-33), meaning new versions replace old ones automatically. A provider's listing is always current.
+The repository contains a working Nostr reference implementation of the discovery model.
 
----
+This implementation is important because it provides a tested starting point for the wider transport-independent protocol. Its Nostr-specific behaviour should not be treated as a requirement for other transports.
 
-## Service Listing Data Model (Kind 38383)
+### Service Listing Fields
 
-Every provider publishes an event with these tags:
+The current Nostr service listing can describe fields including:
 
-### Required Tags
+- provider name
+- country
+- direction
+- `rail_in`
+- `rail_out`
+- currency
+- minimum amount
+- maximum amount
+- fee range
+- speed
+- service endpoint
 
-| Tag | Example | Purpose |
-|-----|---------|---------|
-| d | provider-a-tz-offramp | Unique service ID (replaceable key) |
-| name | Provider A | Human-readable provider name |
-| country | TZ | ISO 3166-1 alpha-2 country code |
-| direction | off-ramp | off-ramp, on-ramp, or both |
-| rail_in | lightning | What comes in (lightning, on-chain, ecash) |
-| rail_out | m-pesa | What goes out (m-pesa, mtn-momo, airtel-money, bank, cash) |
-| currency | TZS | ISO 4217 fiat currency |
-| endpoint | https://api.example.com | API base URL |
-| health | https://api.example.com/health | Liveness check URL |
-| status | active | active, maintenance, or offline |
+The current African payment examples include Bitcoin rails such as Lightning, on-chain Bitcoin and ecash, and local rails such as M-Pesa, MTN Mobile Money, Airtel Money, bank transfers and cash.
 
-### Optional Tags
+The implementation should expose enough information for discovery while avoiding unnecessary disclosure of sensitive business or personal information.
 
-| Tag | Example | Purpose |
-|-----|---------|---------|
-| network | vodacom-tz | Specific mobile network operator |
-| min_amount | 2500 | Minimum transaction in local currency |
-| max_amount | 1000000 | Maximum transaction in local currency |
-| fee_range | 1.5-2.2 | Fee percentage range (not exact — protects competitive info) |
-| speed | seconds | seconds, minutes, or hours |
-| ttl | 90000 | Seconds until listing is stale (default: 25 hours) |
-| protocols | bolt11,nwc,lnurl | Supported Lightning protocols |
-| kyc | none | none, light, or full |
-| heartbeat | daily | daily, hourly, or on-change |
-
----
-
-## Trust Scoring
-
-| Source | Weight | Rationale |
-|--------|--------|-----------|
-| Alliance attestation | +3 | Bootstrap trust anchor (reduces to +1 at 12 months) |
-| Provider attestation (recognised key) | +1 | Peer trust from working relationship |
-| Unknown key attestation | 0 | Sybil resistance — unknown keys carry no weight |
-| Active revocation | -10 | Effectively removes from results |
-
-Results ranked by: trust score → speed → fee range (lowest).
-
----
-
-## Health Endpoint
-
-Every provider exposes a simple GET endpoint:
-
-```
-GET /health
-
-{
-  "status": "active",
-  "uptime_24h": "99.2%",
-  "avg_speed_seconds": 12,
-  "capacity": "available",
-  "last_transaction": "2m ago",
-  "version": "1.0.0"
-}
-```
-
-Wallets and other providers ping this before routing a transaction. If it doesn't respond or returns "offline", they skip to the next provider. This is the real-time liveness signal.
-
----
-
-## The Query Flow
-
-Step by step, what happens when a wallet (or provider) needs to find a service:
-
-1. Wallet A sends a Nostr filter to relays: `{ kinds: [38383], #country: ["TZ"], #direction: ["off-ramp"], #rail_out: ["m-pesa"] }`
-2. Relay returns matching service listings
-3. Wallet A fetches attestations for each result: `{ kinds: [38384], #p: ["provider_pubkey"] }`
-4. Wallet A checks for revocations: `{ kinds: [38385], #p: ["provider_pubkey"] }`
-5. Wallet A calculates trust score for each provider
-6. Wallet A ranks results by trust → speed → fees
-7. Wallet A pings top-ranked provider's /health endpoint
-8. If healthy, Wallet A connects to provider's API to execute the transaction
-9. If unhealthy, Wallet A tries the next provider
-
-The user sees none of this. They just see "Send to M-Pesa (Tanzania)" as an option.
-
-### Provider-to-Provider Flow
-
-The same query works for cross-border routing between providers:
-
-```
-User in Country X ──► Provider A (Country X) ──► Discovery ──► Provider B (Country Y) ──► Recipient
-                       handles origin side        finds dest    handles destination side
-```
-
-Provider A receives a request it can't fulfil locally. It queries the directory for a provider in the destination country, checks attestations, pings health, and routes the foreign leg. The user sees one seamless transaction.
-
----
-
-## What We're Building — The npm Package
-
-The protocol spec describes the rules. The npm package (`lipa-bitcoin-discovery`) is the tool that any provider uses to participate. It has three modules:
+For example, a fee range can communicate the approximate cost of a service without requiring a provider to publish exact commercial pricing. Capability information can describe what a provider supports without necessarily revealing its current liquidity or capacity.
 
 ### Publisher
-Any provider imports it, configures their service details, and publishes to all three relays.
 
-```javascript
-const { Publisher } = require('lipa-bitcoin-discovery');
-const publisher = new Publisher({ privateKey, relays });
-await publisher.publish(myServiceListing);
-```
+The `Publisher` component creates and publishes Nostr service-listing events.
+
+It is responsible for:
+
+- building service-listing events
+- validating required fields
+- normalising country and currency codes
+- signing events
+- publishing them to configured relays
 
 ### Querier
-Any wallet or provider imports it to find services across Africa.
 
-```javascript
-const { Querier } = require('lipa-bitcoin-discovery');
-const querier = new Querier({ relays });
-const providers = await querier.find({ country: 'TZ', direction: 'off-ramp' });
-```
+The `Querier` component discovers and evaluates service listings.
+
+Current functionality includes:
+
+- `find()` for filtered discovery
+- `findByCountry()` for country queries
+- `findOffRamp()` for off-ramp queries
+- `findOnRamp()` for on-ramp queries
+- `checkHealth()` for provider health checks
+- `findHealthy()` for discovery combined with health checks
 
 ### Attestation
-Any provider imports it to vouch for partners or check trust scores.
 
-```javascript
-const { Attestation } = require('lipa-bitcoin-discovery');
-const attestation = new Attestation({ privateKey, relays });
-await attestation.vouch(partnerPubkey, { rating: 'reliable' });
-const score = await attestation.score(providerPubkey);
+The `Attestation` component implements the current Nostr trust mechanism.
+
+It supports:
+
+- publishing attestations
+- revoking attestations
+- retrieving attestations for a provider
+- retrieving revocations
+- calculating the current implementation's trust score
+
+The current implementation uses:
+
+- Kind 38384 for attestations
+- Kind 38385 for revocations
+
+Attestations are signed by the attesting provider. Self-attestation is rejected.
+
+The current scoring model gives weight to recognised providers and configured trust anchors while giving unknown keys no positive trust weight. Unknown-key revocations are also ignored so that an arbitrary identity cannot simply damage another provider's reputation.
+
+This scoring system is an implementation-specific trust mechanism. It is not a mandatory trust model for the wider discovery protocol.
+
+### Health and Recent Activity
+
+The current implementation can query a provider's health endpoint.
+
+A successful health check indicates that the endpoint responded at the time of the check. It does not guarantee that the provider is solvent, trustworthy or continuously available.
+
+A future discovery interface may expose a signal such as **Verified Active Recently** to communicate recent observed activity. Such a signal should always be understood as time-bound evidence rather than a guarantee.
+
+### Current Test Coverage
+
+The repository includes offline and live testing for the Nostr implementation.
+
+The offline tests cover areas including:
+
+- event signatures
+- validation and normalisation
+- service listings
+- attestations
+- revocations
+- trust-scoring behaviour
+- revocation penalties
+- Sybil-resistance rules
+
+The live test suite exercises the end-to-end Nostr cycle, including publishing a listing, discovering it, publishing an attestation and retrieving the resulting trust information from public relays.
+
+These tests establish the current state of the Nostr reference implementation. They do not imply that the wider transport-independent protocol is complete.
+
+### Nostr Implementation Constraints
+
+The current implementation has identified several important constraints.
+
+#### Relay Tag Indexing
+
+Public Nostr relays do not reliably provide server-side indexing for arbitrary multi-character tags.
+
+The current service listings therefore use client-side filtering after retrieving relevant events.
+
+This works at the current scale but may require a different indexing strategy as the number of providers grows.
+
+#### Kind 38383 Collision
+
+Kind 38383 is already used by another Nostr protocol, including NIP-69/Mostro.
+
+The current implementation distinguishes its service listings using expected fields such as `name` and `country`.
+
+A future production Nostr transport should consider a dedicated event kind or another robust namespacing mechanism.
+
+#### Attestation Indexing
+
+Attestations and revocations target providers using the single-letter `p` tag.
+
+This allows more efficient server-side filtering than the current multi-character service-listing tags.
+
+These constraints are specific to the Nostr transport and should not limit implementations using HTTP, provider-hosted discovery, directories or other transports.
+
+## 16. Settlement Is Separate
+
+Discovery helps software find a service. It does not perform the transaction itself.
+
+Settlement may involve:
+
+- Lightning
+- on-chain Bitcoin
+- ecash
+- mobile money
+- bank transfers
+- cash
+- other local payment rails
+
+The discovery protocol can describe which settlement rails a provider supports, but the actual exchange, payment, custody and transaction process belongs to the provider and the systems involved in settlement.
+
+Keeping settlement separate prevents the discovery protocol from becoming unnecessarily tied to one payment implementation.
+
+A future settlement API may be developed separately if there is a clear need for interoperability at that layer.
+
+
+## 17. Security and Abuse Considerations
+
+An open discovery system can be abused even when the underlying protocol is permissionless.
+
+The design should account for:
+
+- spam listings
+- false or misleading service descriptions
+- Sybil identities
+- stale information
+- malicious providers
+- compromised provider infrastructure
+- fraudulent attestations
+- privacy risks from excessive metadata
+
+Discovery should therefore be treated as an information layer, not a guarantee of safety.
+
+Applications should evaluate providers according to their own risk models and should avoid presenting discovery information as an endorsement unless they have independently verified it.
+
+The protocol should also minimise unnecessary personal information. A provider should be able to describe a service without being forced to publish sensitive information.
+
+## 18. Build Plan
+
+### Phase 1: Core Protocol
+
+Define the common service description, query model, identifiers, validation rules and transport-neutral terminology.
+
+### Phase 2: Nostr Transport
+
+Maintain and refine the existing Nostr implementation as the first reference transport.
+
+### Phase 3: HTTP/API Transport
+
+Define an HTTP/API representation of the same service descriptions and queries.
+
+### Phase 4: Directory Integration
+
+Allow directories and indexes to consume, publish or curate compatible service descriptions.
+
+### Phase 5: Wallet Integration
+
+Demonstrate discovery from a wallet or payment application using multiple transports where practical.
+
+### Phase 6: Provider-to-Provider Discovery
+
+Demonstrate discovery between payment providers for cross-border routing and interoperability.
+
+### Phase 7: Interoperability
+
+Document how independent implementations can exchange compatible service descriptions and discovery results.
+
+## 19. Repository Direction
+
+The repository should gradually evolve from a Nostr-focused implementation into a transport-independent protocol implementation.
+
+A possible structure is:
+
+```text
+lipa-bitcoin-discovery/
+ ├── docs/
+ │    ├── protocol/
+ │    ├── examples/
+ │    └── PROJECT_BLUEPRINT.md
+ │
+ ├── lib/
+ │    ├── core/
+ │    ├── transports/
+ │    │    ├── nostr/
+ │    │    └── http/
+ │    └── trust/
+ │
+ ├── examples/
+ └── tests/
 ```
 
----
+The existing working implementation should be preserved while the protocol boundaries are clarified.
 
-## Build Plan — 5 Steps
+New transports should be added without requiring the core protocol to depend on their specific libraries or infrastructure.
 
-### Current Status: 5 of 5 steps complete
+## 20. Who This Is For
 
-The full protocol is implemented. A provider can publish a service listing to three public Nostr relays, any wallet or provider can discover it, providers can vouch for and revoke each other, and consumers can compute a trust score to rank results. The package exposes a clean API and ships with an offline + live test suite. The npm package is ready for any provider to install and use.
+Lipa Bitcoin Discovery is intended for:
 
-### Step 1: Setup & Keys ✅ COMPLETE
+- Bitcoin payment providers
+- wallet developers
+- payment applications
+- Bitcoin service directories
+- exchanges and on/off-ramp services
+- cross-border payment providers
+- infrastructure developers
+- researchers and open-source contributors
 
-What was built:
-- `lib/src/config.js` — Event kinds (38383, 38384, 38385), three public relays (relay.damus.io, relay.nostr.band, nos.lol), trust weights, WebSocket polyfill for Node.js
-- `lib/src/keys.js` — `generateKeys()` creates a new Nostr keypair, `loadKeys(hex)` loads from hex string, `loadKeysFromEnv()` loads from environment variable
-- `lib/examples/generate-keys.js` — CLI tool to generate a provider identity
-- `lib/package.json` — npm package configuration with dependencies (nostr-tools, ws)
+It is also intended to benefit people who need to find practical Bitcoin payment services in African markets.
 
-Status: Tested and pushed to GitHub.
+## 21. Project Principles
 
-### Step 2: Publisher ✅ COMPLETE
+### Open Discovery
 
-What was built:
-- `lib/src/publisher.js` — The Publisher class
-- Builds service listing events (kind 38383) from a simple config object
-- Signs events with the provider's Nostr private key via `finalizeEvent()`
-- Publishes to all three public relays via nostr-tools SimplePool
-- Validates required fields, uppercases country/currency codes automatically
-- Returns per-relay success/failure results
-- `lib/examples/publish-listing.js` — Working example that publishes a test listing
+Providers should be able to make their services discoverable without requiring permission from a single central authority.
 
-Live test result: Published successfully to all three relays (relay.damus.io ✓, relay.nostr.band ✓, nos.lol ✓). First service listing is live on Nostr — queryable by anyone on the planet.
+### Transport Independence
 
-Status: Tested live and pushed to GitHub.
+No single network or transport should be mandatory for the protocol as a whole.
 
-### Step 3: Querier ✅ COMPLETE
+### Interoperability
 
-What was built:
-- `lib/src/querier.js` — The Querier class
-- `find(filters)` — Main query method with country, direction, rail_in, rail_out, currency filters
-- `findByCountry(country)` — Shorthand for country-only queries
-- `findOffRamp(country, railOut)` — Shorthand for off-ramp queries
-- `findOnRamp(country)` — Shorthand for on-ramp queries
-- `checkHealth(url)` — Pings a provider's /health endpoint, returns structured data or null
-- `findHealthy(filters)` — Combines discovery + health check, returns only live providers
-- Deduplicates results by service ID (keeps most recent)
-- `lib/examples/query-providers.js` — Working example with CLI args (`node query-providers.js TZ m-pesa`)
+Different discovery mechanisms should describe services using compatible concepts and data structures.
 
-Live test result: Successfully discovered the published Provider A listing from all three relays.
+### Configurable Trust
 
-**Important lessons learned during implementation:**
+Trust decisions should remain with the applications and communities using the protocol rather than being hard-coded into one universal ranking.
 
-1. **Relays don't index custom tag names.** Public Nostr relays only index single-letter tags (#p, #e, #d, #t). Our multi-character tags (#country, #direction, #rail_out) are stored but NOT searchable server-side. The fix: query by kind only, then filter client-side. This works fine at our scale (dozens of providers) but may need revisiting at hundreds.
+### Settlement Independence
 
-2. **Kind 38383 is already in use** by another protocol (P2P trading — NIP-69 Mostro). There are ~667 events of this kind on public relays, mostly from other projects. Our events are distinguishable by the presence of `name` and `country` tags. For production, we should either register a new kind number via a formal NIP, or use the `d` tag prefix convention to namespace our events.
+Discovery should not dictate how users and providers ultimately settle transactions.
 
-3. **Client-side filtering approach:** The querier fetches all kind 38383 events, skips those without our expected tags (filtering out Mostro and other protocols), then applies country/direction/rail filters in JavaScript. This adds latency at large scale but is the correct approach for public relays that don't support custom tag indexing.
+### African Grounding
 
-Status: Tested live and pushed to GitHub.
+The protocol should reflect African payment realities, including mobile money, local currencies, low-bandwidth environments and cross-border payments.
 
-### Step 4: Attestation ✅ COMPLETE
+### Extensibility
 
-What was built:
-- `lib/src/attestation.js` — The Attestation class (signs like the Publisher, queries like the Querier)
-- `vouch(pubkey, options)` — Publishes an attestation (kind 38384) for a partner. Rejects self-attestation.
-- `revoke(pubkey, reason, options)` — Publishes a revocation (kind 38385). Reason is required.
-- `getAttestations(pubkey)` / `getRevocations(pubkey)` — Fetch and parse trust events for a provider
-- `score(pubkey, { knownProviders, alliancePubkey, attestations, revocations })` — Calculate trust score with a per-tier breakdown
-- `buildVouchEvent` / `buildRevokeEvent` — Build-and-sign helpers (mirrors Publisher.buildEvent)
-- `lib/examples/publish-attestation.js` — Working CLI example (`vouch` / `revoke` / `score`)
+The design should allow new Bitcoin rails, payment rails, currencies, protocols and discovery transports to be added over time.
 
-Implementation notes:
-1. **The `p` tag is server-indexable.** Unlike service listings (which use multi-character tags that public relays don't index, forcing client-side filtering), attestations target a provider via the single-letter `p` tag. So `getAttestations` and `getRevocations` filter server-side with `{ kinds: [38384], '#p': [pubkey] }` — more efficient than the listing query.
-2. **Defensive dedupe.** Events are replaceable (NIP-33), but scoring also dedupes by author and keeps the most recent, so a single key can never inflate a score by republishing.
-3. **Sybil resistance enforced both directions.** Only recognised keys (alliance or known providers) move the score. Unknown-key attestations score 0, and — importantly — unknown-key *revocations* are ignored entirely. A stranger cannot tank a provider's score.
+## 22. Origin
 
-Status: Implemented and unit-tested (offline). Live relay cycle wired into the test suite.
+Lipa Bitcoin Discovery grew from the need to make African Bitcoin payment services easier for software to discover.
 
-### Step 5: Index, Testing & Examples ✅ COMPLETE
+The project builds on the original African Bitcoin service discovery work and extends the idea towards a broader, transport-independent discovery protocol.
 
-What was built:
-- `lib/src/index.js` — Clean exports: `{ Publisher, Querier, Attestation, generateKeys, loadKeys, loadKeysFromEnv, KINDS, DEFAULT_RELAYS, DEFAULT_TTL, TRUST_WEIGHTS }`
-- `lib/test/run.js` — Two-tier test suite:
-  - **Offline suite** (`node test/run.js`) — deterministic, no network. Verifies signatures for all three event kinds, field validation/normalisation, and the full trust-scoring math (alliance/provider/unknown tiers, revocation penalty, sybil resistance). 34 assertions, all passing.
-  - **Live suite** (`LIVE=1 node test/run.js`) — the full end-to-end cycle against real public relays: generate keys → publish listing → discover it back → vouch → fetch attestation → read trust score.
+Nostr remains an important reference implementation because it demonstrates how providers can publish and discover service information without relying on a central registration authority.
 
-Status: Offline suite passing (34/34). Live suite ready to run from a machine with relay access.
+The architectural goal is broader than Nostr: compatible discovery should be possible through multiple transports.
 
-After this step: The package is complete and ready for any provider to npm install and use.
+## 23. Current Status
+
+The repository currently contains a working Nostr-based discovery implementation and the protocol architecture is being separated from that transport.
+
+The immediate priority is to define the transport-neutral service description and discovery model clearly before implementing additional transports.
+
+The Nostr implementation should continue to serve as a practical reference while the core protocol is formalised.
+
+The project is intended to remain open-source and interoperable so that independent wallets, providers, directories and applications can implement discovery without needing permission from the Lipa project.
 
 ---
 
-## GitHub Repository
-
-**URL:** https://github.com/bmosha00/african-bitcoin-service-discovery-Bitcoin-open-
-
-### Repository Structure
-
-```
-african-bitcoin-service-discovery-Bitcoin-open-/
-├── README.md                         # Project overview, architecture diagram, quick example
-├── CONTRIBUTING.md                   # How to contribute
-├── LICENSE                           # MIT
-│
-├── spec/                             # Protocol specification
-│   ├── NIP-XXXXX.md                  # Formal Nostr NIP (event kinds, tags, query flow)
-│   ├── data-model.md                 # Complete tag reference with all values
-│   ├── attestation.md                # Web of trust, scoring, dispute resolution
-│   └── settlement-api.md            # v0.2 draft — standard /quote /execute /status API
-│
-├── docs/                             # Supporting documents
-│   ├── PROJECT_BLUEPRINT.md          # This document — full project overview
-│   ├── risks-and-mitigations.md      # 5 known risks with proposed solutions
-│   └── implementation-roadmap.md     # 4-phase build plan for the alliance
-│
-├── examples/                         # JSON examples
-│   ├── service-listing.json          # Example kind 38383 event
-│   ├── attestation.json              # Example kind 38384 event
-│   ├── revocation.json               # Example kind 38385 event
-│   ├── wallet-query-flow.json        # Complete query sequence
-│   └── provider-to-provider-flow.json # Cross-border routing example
-│
-└── lib/                              # npm package (lipa-bitcoin-discovery)
-    ├── package.json                  # Package config and dependencies
-    ├── .gitignore                    # node_modules, .env
-    ├── src/
-    │   ├── config.js                 # Event kinds, relays, trust weights ✅
-    │   ├── keys.js                   # Key generation and loading ✅
-    │   ├── publisher.js              # Publish service listings ✅
-    │   ├── querier.js                # Discover providers (client-side filtering) ✅
-    │   ├── attestation.js            # Trust layer — vouch, revoke, score ✅
-    │   └── index.js                  # Main exports ✅
-    ├── test/
-    │   └── run.js                    # Offline logic suite + live relay cycle ✅
-    └── examples/
-        ├── generate-keys.js          # Create a provider identity ✅
-        ├── publish-listing.js        # Publish a test listing ✅
-        ├── query-providers.js        # Search for providers ✅
-        └── publish-attestation.js    # Vouch / revoke / score a partner ✅
-```
-
----
-
-## Known Risks and Mitigations
-
-### Risk 1: Cold Start (HIGH)
-The protocol needs both providers and wallets. Neither will adopt without the other.
-**Mitigation:** Launch with one corridor between two countries, one wallet partner. One demo, then expand.
-
-### Risk 2: Settlement Not Standardised (MEDIUM)
-Discovery finds providers, but each has a different API. Wallets must integrate each one separately.
-**Mitigation:** v0.2 defines a standard settlement API (/quote, /execute, /status). Build in parallel, ship after discovery proves itself.
-
-### Risk 3: Heartbeat Bandwidth (LOW)
-Fixed heartbeats from 200+ providers waste relay bandwidth.
-**Mitigation:** Daily keepalive + publish-on-change. Health endpoint handles real-time liveness.
-
-### Risk 4: Trust Centralisation (MEDIUM)
-Alliance attestation dominates early trust scores.
-**Mitigation:** Accepted as bootstrap mechanism. Alliance weight drops from +3 to +1 at 12 months.
-
-### Risk 5: Dispute Resolution (HIGH)
-No mechanism to flag bad providers who take payment but don't deliver.
-**Mitigation:** Three layers — wallet-side tracking (private), alliance complaint process (72hr investigation), revocation events (kind 38385). No anonymous negative attestations.
-
----
-
-## Origin
-
-This protocol was proposed at the first Africa Bitcoin Payment Retreat in Naivasha, Kenya (June 13–15, 2026), hosted by Minmo and supported by the Human Rights Foundation (HRF).
-
-The retreat brought together builders from across the continent to address shared challenges in scaling Bitcoin payments in Africa. Service discovery and interoperability emerged from Block 3 (Open Rails & Interoperability) as a concrete initiative the alliance committed to building.
-
-The protocol is open infrastructure. It belongs to no single company. It is designed to survive even if the alliance dissolves. Any provider can participate. Any wallet can query. The code is MIT licensed.
-
----
-
-## Who This Is For
-
-**African Bitcoin payment companies** — Publish your service listing so wallets find you automatically. Query the directory to find providers in other countries for cross-border routing. Vouch for partners you trust.
-
-**Wallet developers** — Integrate the querier and offer "Send to M-Pesa/MTN/Airtel" to your users without individual provider integrations. One integration, every provider.
-
-**The Africa Bitcoin Payment Alliance** — Coordinates development, operates reference infrastructure, provides the bootstrap trust anchor, handles dispute resolution.
-
-**Anyone building on Bitcoin in Africa** — The protocol is permissionless. If you can publish a Nostr event, you can participate.
-
----
-
-## Technical Notes from Implementation
-
-These are important findings from building and testing the protocol against live Nostr relays.
-
-### Relay tag indexing limitation
-Public Nostr relays (relay.damus.io, relay.nostr.band, nos.lol) only index single-letter tags for server-side filtering. Multi-character tags like `country`, `direction`, `rail_out` are stored correctly but cannot be used in REQ filters. The current workaround is client-side filtering: fetch all events of the target kind, then filter in JavaScript. This works at our current scale. For production at hundreds of providers, options include using single-letter tags with a namespace prefix, or operating alliance relays with custom indexing.
-
-### Kind 38383 collision
-Kind 38383 is already used by NIP-69 (Mostro P2P trading). There are ~667 events of this kind on public relays from other projects. Our events are distinguishable by the presence of `name` and `country` tags, which Mostro events don't have. For production, we should register a dedicated kind number via a formal NIP submission, or use a kind in the 30000-39999 addressable range with a unique `d` tag prefix.
-
-### Provider identity
-Each provider generates a Nostr keypair. The public key becomes the provider's permanent identity on the discovery network. The private key signs all events. Losing the private key means losing control of the listing. Providers should store the private key in environment variables, never in code.
-
-### Live test results
-First successful publish-and-discover cycle completed June 25, 2026. A service listing was published to three public relays and successfully queried back, confirming the core protocol loop works end to end.
-
----
-
-> Discovery finds. Attestation vouches. Settlement is yours.
->
-> Open protocol. No single point of control. Built for Africa.
+**Open protocol. Multiple transports. No mandatory central registry. Built for African Bitcoin payments.**
