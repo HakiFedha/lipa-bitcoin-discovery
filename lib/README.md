@@ -186,3 +186,16 @@ All are parameterized replaceable events (NIP-33) — the newest version always 
 This protocol *introduces* parties. How value actually moves between them — quotes, execution, status — is negotiated directly via each provider's own API. Discovery finds. Attestation vouches. Settlement is yours.
 
 MIT licensed. Built for Africa.
+
+## Live Deployment
+
+The HTTP discovery transport is deployed at:
+
+```
+https://lipa-bitcoin-discovery.onrender.com
+```
+
+- `GET /v1/health` — service status, relay list, cache stats
+- `GET /v1/services?country=TZ&direction=off-ramp` — discovery query (see full parameter list above)
+
+Hosted on Render's free tier under the HakiFedha account. The free tier spins down after periods of inactivity; the first request after idle time may take 30-60 seconds while it wakes up.
