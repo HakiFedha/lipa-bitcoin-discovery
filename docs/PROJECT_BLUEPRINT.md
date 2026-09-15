@@ -422,6 +422,13 @@ docs/
  └── PROJECT_BLUEPRINT.md
 ```
 
+**Current implementation status:** The repository today still uses the original flat
+structure (`lib/src/publisher.js`, `querier.js`, `attestation.js`, `config.js`,
+`keys.js`, `index.js`), which is Nostr-specific throughout. The `core/transports/trust`
+layout above is the intended direction, not the current state. The split into a
+transport-neutral core is planned to happen once an HTTP/API transport exists to
+validate the abstraction, rather than being refactored in advance of a second transport.
+
 The exact repository structure may change as the implementation develops. The architectural separation is the important part.
 
 The core should define common service descriptions, queries and validation rules without depending on Nostr-specific libraries.
