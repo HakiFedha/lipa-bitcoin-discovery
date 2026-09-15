@@ -9,7 +9,8 @@
     "example:publish": "node examples/publish-listing.js",
     "example:query": "node examples/query-providers.js",
     "example:attest": "node examples/publish-attestation.js",
-    "start:http": "node examples/start-http-server.js"
+    "start:http": "node examples/start-http-server.js",
+    "start": "node examples/start-http-server.js"
   },
   "keywords": [
     "bitcoin",
