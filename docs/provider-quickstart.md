@@ -36,7 +36,21 @@ For example:
 
 For production use, store the private key using an appropriate secret-management method rather than permanently placing it in your shell history or source code.
 
-## Step 3: Describe Your Service
+## Step 3: Choose Your Service Type
+
+Not every service is a simple currency exchange. The service_type field describes what kind of service you actually offer:
+
+| service_type | What it means | Example |
+|---|---|---|
+| currency-exchange (default) | Buying or selling Bitcoin for local currency | Bitcoin to M-Pesa cash-out |
+| remittance | Bitcoin sent by one party, fiat delivered to a different recipient | Sending money home to a family member's mobile money account |
+| airtime-data | Bitcoin converted directly into phone credit or a data bundle | Bitcoin to Vodacom airtime |
+| bill-payment | Bitcoin used to settle a bill or subscription | Bitcoin to pay an electricity bill |
+| merchant-payment | Bitcoin accepted directly for goods or services | A shop accepting Lightning at checkout |
+
+If you omit service_type entirely, it defaults to currency-exchange, so this only matters if your service is one of the other four kinds.
+
+## Step 4: Describe Your Service
 
 Open:
 
@@ -46,11 +60,13 @@ and edit the service details to match your actual service.
 
 | Field | What to put |
 |---|---|
-| `country` | Where you operate, using an ISO country code such as `TZ` for Tanzania |
+| `country` | Where you operate, using an ISO country code such as `KE` for Kenya |
 | `direction` | `off-ramp` (Bitcoin → local currency), `on-ramp` (local currency → Bitcoin), or `both` |
+| `service_type` | See the table in Step 3. Omit for currency-exchange. |
 | `rail_in` | How Bitcoin or value reaches the service, such as `lightning`, `on-chain`, or `ecash` |
-| `rail_out` | What the customer receives, such as `m-pesa`, `mtn-momo`, `airtel-money`, `bank`, or `cash` |
-| `currency` | Local currency using its ISO code, such as `TZS` |
+| `rail_out` | What the customer receives, such as `m-pesa`, `mtn-momo`, `airtel-money`, `bank`, or `cash`. Required for currency-exchange and remittance. Optional otherwise. |
+| `product` | Free text naming the specific product or destination for airtime-data, bill-payment, or merchant-payment (e.g. "Vodacom airtime"). Not normally used for currency-exchange. |
+| `currency` | Local currency using its ISO code, such as `KES` |
 | `endpoint` | An HTTPS URL for the provider's service or integration endpoint, if one is available |
 | `health` | An HTTPS URL that can be checked to determine whether the service is reachable and operational |
 | `fee_range` | An approximate fee range, such as `"1.5-2.2"` |
@@ -62,7 +78,7 @@ The health endpoint indicates whether a service is reachable or operational. It 
 
 Live availability or transaction capacity can be added separately. For example, a provider could eventually expose whether a service is currently available, limited, or temporarily unable to process transactions because of insufficient liquidity.
 
-## Step 4: Publish Your Listing
+## Step 5: Publish Your Listing
 
 Run:
 
@@ -78,7 +94,7 @@ https://lipa-bitcoin-discovery.onrender.com
 
 The HTTP API is a discovery interface for applications that do not need to use Nostr directly.
 
-## Step 5: Confirm That Your Service Is Discoverable
+## Step 6: Confirm That Your Service Is Discoverable
 
 Run:
 
@@ -123,7 +139,7 @@ For example, a provider might report:
     {
       "status": "available",
       "max_amount": 500000,
-      "currency": "TZS"
+      "currency": "KES"
     }
 
 or temporarily report:
@@ -131,7 +147,7 @@ or temporarily report:
     {
       "status": "liquidity_exhausted",
       "max_amount": 0,
-      "currency": "TZS"
+      "currency": "KES"
     }
 
 The provider's own systems should be the source of truth for its current transaction capacity.
