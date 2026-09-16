@@ -2,11 +2,28 @@
 // Open protocol for discovering Bitcoin payment services across Africa.
 
 export type Direction = 'off-ramp' | 'on-ramp' | 'both';
-export type RailIn = 'lightning' | 'on-chain' | 'ecash' | 'lnurl';
-export type RailOut = 'm-pesa' | 'mtn-momo' | 'airtel-money' | 'orange-money' | 'bank' | 'cash';
+export type Rail =
+  | 'lightning'
+  | 'on-chain'
+  | 'ecash'
+  | 'lnurl'
+  | 'm-pesa'
+  | 'mtn-momo'
+  | 'airtel-money'
+  | 'orange-money'
+  | 'zamtel-money'
+  | 'lumicash'
+  | 'bank'
+  | 'cash';
 export type Status = 'active' | 'maintenance' | 'offline';
 export type Kyc = 'none' | 'light' | 'full';
 export type Speed = 'seconds' | 'minutes' | 'hours';
+export type ServiceType =
+  | 'currency-exchange'
+  | 'remittance'
+  | 'airtime-data'
+  | 'bill-payment'
+  | 'merchant-payment';
 
 /** A signed Nostr event. */
 export interface NostrEvent {
@@ -40,11 +57,15 @@ export interface ServiceListing {
   name: string;
   country: string;      // ISO 3166-1 alpha-2
   direction: Direction;
-  rail_in: RailIn;
-  rail_out: RailOut;
+  service_type?: ServiceType;
+  product?: string;
+  rails: {
+    in: Rail[];
+    out: Rail[];
+  };
   currency: string;     // ISO 4217
-  endpoint: string;     // https URL
-  health: string;       // https URL
+  endpoint?: string;    // https URL, when available
+  health?: string;      // https URL, when available
   status?: Status;
   network?: string;
   min_amount?: string | number;
@@ -69,11 +90,15 @@ export interface Provider {
   name: string;
   country: string;
   direction: Direction;
-  rail_in: RailIn;
-  rail_out: RailOut;
+  service_type: ServiceType;
+  product: string | null;
+  rails: {
+    in: Rail[];
+    out: Rail[];
+  };
   currency: string;
-  endpoint: string;
-  health: string;
+  endpoint: string | null;
+  health: string | null;
   status: Status;
   network: string | null;
   min_amount: string | null;
@@ -101,8 +126,9 @@ export interface HealthData {
 export interface QueryFilters {
   country?: string;
   direction?: Direction;
-  rail_in?: RailIn;
-  rail_out?: RailOut;
+  service_type?: ServiceType;
+  rail_in?: Rail;
+  rail_out?: Rail;
   currency?: string;
   freshOnly?: boolean;
   ttl?: number;
@@ -177,7 +203,7 @@ export class Querier {
   relays: string[];
   find(filters?: QueryFilters): Promise<Provider[]>;
   findByCountry(country: string): Promise<Provider[]>;
-  findOffRamp(country: string, railOut: RailOut): Promise<Provider[]>;
+  findOffRamp(country: string, railOut: Rail): Promise<Provider[]>;
   findOnRamp(country: string): Promise<Provider[]>;
   checkHealth(healthUrl: string, timeout?: number): Promise<HealthData | null>;
   findHealthy(filters?: QueryFilters): Promise<Provider[]>;
@@ -211,12 +237,19 @@ export const MAX_HEALTH_BYTES: number;
 export const HEALTH_CONCURRENCY: number;
 export const TRUST_WEIGHTS: { ALLIANCE: number; PROVIDER: number; UNKNOWN: number; REVOCATION: number };
 export const PROTOCOL_VERSION: string;
-export const FILTER_TAGS: { country: 'c'; direction: 'o'; rail_in: 'i'; rail_out: 'm'; currency: 'f' };
+export const FILTER_TAGS: {
+  country: 'c';
+  direction: 'o';
+  service_type: 's';
+  rail_in: 'i';
+  rail_out: 'm';
+  currency: 'f';
+};
 export const ALT_TEXT: Record<number, string>;
 export const VOCAB: {
   direction: Direction[];
-  rail_in: RailIn[];
-  rail_out: RailOut[];
+  service_type: ServiceType[];
+  rail: Rail[];
   status: Status[];
   kyc: Kyc[];
   speed: Speed[];
