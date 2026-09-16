@@ -28,7 +28,11 @@ The fields below describe the service itself. Transport-specific representations
 
 `directions` - Service direction: `on-ramp`, `off-ramp`, or `both`.
 
-`rails` - Payment rails supported by the service. `in` describes the rail used to send value into the service and `out` describes the rail used to receive value from the service. Examples include Lightning, on-chain Bitcoin, ecash, LNURL, mobile money, bank transfers, and cash.
+`service_type` - The kind of service being offered: `currency-exchange` (buying or selling Bitcoin for fiat currency), `remittance` (Bitcoin sent by one party, fiat delivered to a different recipient), `airtime-data` (Bitcoin converted directly into mobile airtime or a data bundle), `bill-payment` (Bitcoin used to settle a bill or subscription), or `merchant-payment` (Bitcoin accepted directly for goods or services). Defaults to `currency-exchange` when absent, so every listing published before this field existed remains valid and correctly described without republishing.
+
+`product` - Optional free-text description of the specific product or destination where a fixed rail vocabulary does not apply, such as a named airtime carrier, a biller, or a merchant category. Not applicable to `currency-exchange`.
+
+`rails` - Payment rails supported by the service. `in` describes the rail used to send value into the service and `out` describes the rail used to receive value from the service. Examples include Lightning, on-chain Bitcoin, ecash, LNURL, mobile money, bank transfers, and cash. `out` is required for `currency-exchange` and `remittance` service types, since both genuinely deliver fiat through a payment rail. It is optional for `airtime-data`, `bill-payment`, and `merchant-payment`, where Bitcoin may settle the obligation directly with no fiat rail involved.
 
 `currencies` - Fiat or other currencies supported by the service, using ISO 4217 codes where applicable.
 
@@ -59,7 +63,7 @@ The fields below describe the service itself. Transport-specific representations
 
 Discovery queries are transport-independent. They allow an application to ask for services matching criteria such as country, direction, payment rail, currency, KYC requirements, status, or network.
 
-Common query fields include countries, directions, rails, currencies, kyc, status, and network.
+Common query fields include countries, directions, service_type, rails, currencies, kyc, status, and network.
 
 A transport may support only some filtering operations remotely. When necessary, a client may retrieve a broader result set and apply additional filtering locally.
 
@@ -91,6 +95,7 @@ Nostr-specific filtering uses single-letter tags for the fields that need server
 |-------|-----|-----------|
 | country | `c` | yes (server-side) |
 | direction | `o` | yes (server-side) |
+| service_type | `s` | yes (server-side) |
 | rail_in | `i` | yes (server-side) |
 | rail_out | `m` | yes (server-side) |
 | currency | `f` | yes (server-side) |
@@ -106,13 +111,16 @@ Unique identifier for this service listing. Format: `{provider}-{country}-{direc
 Always `African Bitcoin payment service listing`. Lets generic Nostr clients render the event meaningfully.
 
 #### `v` - Data model version
-Version of the canonical service description represented by this Nostr listing. Clients may warn or reject on unsupported versions.
+Version of the canonical service description represented by this Nostr listing. Clients may warn or reject on unsupported versions. Current version: `0.3`, which added `service_type`/`product`. A `0.2` listing is a valid `currency-exchange` listing under `0.3` and does not need to be republished.
 
 #### `c` - Country code (filterable)
 ISO 3166-1 alpha-2, uppercase. Common values: `TZ`, `KE`, `NG`, `GH`, `ZA`, `UG`, `ZM`, `RW`. The Nostr transport represents multiple countries by publishing a separate listing for each country. This is a transport-specific encoding of the canonical `countries` field.
 
 #### `o` - Service direction (filterable)
 `off-ramp` (Bitcoin → fiat), `on-ramp` (fiat → Bitcoin), `both`
+
+#### `s` - Service type (filterable)
+`currency-exchange`, `remittance`, `airtime-data`, `bill-payment`, `merchant-payment`. Absent means `currency-exchange`, so listings published before this tag existed remain valid without republishing.
 
 #### `i` - Inbound payment rail (filterable)
 `lightning`, `on-chain`, `ecash`, `lnurl`
@@ -164,6 +172,9 @@ A Lightning Address or address template where applicable. For example, `{phone}@
 
 #### `kyc` - KYC requirements
 `none`, `light` (phone number), `full` (government ID)
+
+#### `product` - Specific product or destination (optional)
+Free text identifying the specific airtime carrier, biller, or merchant category when `s` is `airtime-data`, `bill-payment`, or `merchant-payment`. Not applicable to `currency-exchange`.
 
 > **Liveness has no heartbeat tag.** Providers SHOULD republish only on change (fee, status, rail, endpoint). `ttl` bounds how long a listing is considered fresh; a `/health` endpoint can provide a current liveness indication when queried. There is no fixed-interval heartbeat - it would waste relay bandwidth without improving liveness.
 
