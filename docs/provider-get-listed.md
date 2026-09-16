@@ -16,11 +16,12 @@ Please send us information about the service or services you provide.
 |---|---|
 | Provider name | BitExample |
 | Website | https://example.com |
-| Country | Kenya |
-| Service | Bitcoin to M-Pesa |
-| Direction | Off-ramp (Bitcoin → local currency) |
-| Bitcoin method | Lightning |
-| Customer receives | M-Pesa |
+| Countries | Kenya, Tanzania |
+| Type of service | Buying/selling Bitcoin, remittance, airtime/data, bill payment, merchant payment |
+| Service description | Briefly describe what your customers can do |
+| Direction | On-ramp, off-ramp, both, or not applicable |
+| Bitcoin method | Lightning, on-chain, ecash, etc. |
+| Payment method or destination | M-Pesa, bank, Airtel Money, electricity bill, airtime, etc. |
 | Currency | KES |
 | Minimum transaction | 10,000 KES |
 | Maximum transaction | 1,000,000 KES |
@@ -30,15 +31,19 @@ Please send us information about the service or services you provide.
 | Network | Bitcoin mainnet |
 | Customer support | Email, WhatsApp, Telegram, etc. |
 
+You do not need to use technical terms or know exactly which fields apply to your service. Simply describe what your service does, where you operate, what customers send and receive, and we can help map the information to Lipa Bitcoin Discovery.
+
 ### What Does Direction Mean?
 
-We use two simple terms to describe which way Bitcoin and local currency move:
+For services that exchange Bitcoin and another currency, we use:
 
-- **Off-ramp**: Bitcoin → local currency. For example, someone sends Bitcoin and receives Kenyan shillings through M-Pesa.
-- **On-ramp**: Local currency → Bitcoin. For example, someone pays Kenyan shillings and receives Bitcoin.
+- **On-ramp**: Local currency → Bitcoin.
+- **Off-ramp**: Bitcoin → local currency.
 - **Both**: The service supports both directions.
 
-You do not need to use these terms when sending us your information. Just tell us what your service does and we can record the appropriate direction.
+Direction may not apply to every service. For example, an airtime or bill-payment service may simply convert Bitcoin into a specific product or payment.
+
+You do not need to work out the technical classification yourself. Just tell us what your service does and we can help record it correctly.
 
 ### What Types Of Services Can Be Listed?
 
