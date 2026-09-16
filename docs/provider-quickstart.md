@@ -42,7 +42,7 @@ Not every service is a simple currency exchange. The service_type field describe
 
 | service_type | What it means | Example |
 |---|---|---|
-| currency-exchange (default) | Buying or selling Bitcoin for local currency | Bitcoin to M-Pesa cash-out |
+| currency-exchange (default) | Exchanging Bitcoin for local currency | Bitcoin to M-Pesa cash-out |
 | remittance | Bitcoin sent by one party, fiat delivered to a different recipient | Sending money home to a family member's mobile money account |
 | airtime-data | Bitcoin converted directly into phone credit or a data bundle | Bitcoin to Vodacom airtime |
 | bill-payment | Bitcoin used to settle a bill or subscription | Bitcoin to pay an electricity bill |
