@@ -30,9 +30,10 @@
   },
   "dependencies": {
     "@noble/hashes": "^1.7.2",
+    "dotenv": "^17.4.2",
+    "express": "^4.19.2",
     "nostr-tools": "^2.23.8",
-    "ws": "^8.18.0",
-    "express": "^4.19.2"
+    "ws": "^8.18.0"
   },
   "engines": {
     "node": ">=18.0.0"

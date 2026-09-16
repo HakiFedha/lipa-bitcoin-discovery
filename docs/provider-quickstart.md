@@ -22,19 +22,65 @@ Publishing a listing does not mean that HakiFedha has reviewed, verified or endo
 
 ## Step 2: Create Your Provider Identity
 
-Generate a Nostr keypair:
+Lipa Bitcoin Discovery uses a Nostr keypair to give your published listings a cryptographic publishing identity.
+
+You do not need to understand Nostr to use this. The keypair consists of two keys:
+
+- **Public key**: identifies the publishing identity of your service. You can share this key.
+- **Private key**: a secret that is used to sign your listings. Keep it private and never share it.
+
+Generate a new keypair:
 
     node examples/generate-keys.js
 
-Your public key identifies the publisher of your discovery listings. Your private key signs what you publish, allowing compatible applications to verify that later listings came from the same key.
+The command will display a public key and a private key. It will also show you the line you need to put in your `.env` file.
 
-The private key is sensitive. Keep it secret and never commit it to a repository or share it with anyone.
+Your output will look similar to:
 
-For example:
+    Public key (share freely):
+      YOUR_PUBLIC_KEY
 
-    export NOSTR_PRIVATE_KEY="the_key_it_printed"
+    Private key (KEEP SECRET — store in .env):
+      YOUR_PRIVATE_KEY
 
-For production use, store the private key using an appropriate secret-management method rather than permanently placing it in your shell history or source code.
+    Add to your .env file:
+      NOSTR_PRIVATE_KEY=YOUR_PRIVATE_KEY
+
+The actual keys will be long hexadecimal strings. The example above is only showing where they appear.
+
+### Store Your Private Key In `.env`
+
+From the `lib` directory, create a file called:
+
+    .env
+
+Put your private key in it like this:
+
+    NOSTR_PRIVATE_KEY=YOUR_PRIVATE_KEY
+
+Replace `YOUR_PRIVATE_KEY` with the private key generated for you.
+
+Do not put your public key in this variable. The software derives the public key from the private key when it needs it.
+
+The `.env` file is already included in this project's Git ignore rules. This means Git is configured not to include `lib/.env` when you commit files.
+
+You can confirm this from the `lib` directory with:
+
+    git check-ignore .env
+
+If the command prints:
+
+    .env
+
+Git is ignoring the file.
+
+**Never publish your `.env` file, private key or secret key in GitHub, a chat, an issue, a screenshot or anywhere else.**
+
+If someone obtains your private key, they can create signed listings using the same publishing identity. If you lose the private key, you lose control of that publishing identity.
+
+For a production deployment, use an appropriate secret-management system where possible rather than storing the private key in a long-lived local file.
+
+The public key can be shared when another person or application needs to identify the publishing identity associated with your listings.
 
 ## Step 3: Choose Your Service Type
 
