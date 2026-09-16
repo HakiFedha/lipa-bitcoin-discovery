@@ -65,7 +65,7 @@ and edit the service details to match your actual service.
 | `service_type` | See the table in Step 3. Omit for currency-exchange. |
 | `rail_in` | How Bitcoin or value reaches the service, such as `lightning`, `on-chain`, or `ecash` |
 | `rail_out` | What the customer receives, such as `m-pesa`, `mtn-momo`, `airtel-money`, `bank`, or `cash`. Required for currency-exchange and remittance. Optional otherwise. |
-| `product` | Free text naming the specific product or destination for airtime-data, bill-payment, or merchant-payment (e.g. "Vodacom airtime"). Not normally used for currency-exchange. |
+| `product` | Free text naming the specific product or destination for airtime-data, bill-payment, or merchant-payment (e.g. "Safaricom airtime"). Not normally used for currency-exchange. |
 | `currency` | Local currency using its ISO code, such as `KES` |
 | `endpoint` | An HTTPS URL for the provider's service or integration endpoint, if one is available |
 | `health` | An HTTPS URL that can be checked to determine whether the service is reachable and operational |
