@@ -17,3 +17,11 @@ Do not improvise a listing-level revocation mechanism solely to remove test or d
 These are semantically different for a consumer application distinguishing "get local currency" from "spend Bitcoin directly". A wallet querying `direction: off-ramp` could otherwise receive both kinds of service and reasonably interpret them as currency-conversion services.
 
 Revisit this before the wallet-integration stage. Possible approaches include refining direction semantics, introducing a separate service-purpose or settlement classification, or otherwise making the distinction explicit without breaking the canonical service model.
+
+## HTTP Cache Behaviour
+
+The HTTP transport caches `/v1/services` responses for 30 seconds, including empty results.
+
+If a query is made immediately before a matching listing is published, the cached empty response may therefore be returned for up to 30 seconds even though the listing is already available from the underlying discovery transport.
+
+This is expected cache behaviour, not a discovery failure. When testing immediately after publishing a new listing, use `noCache=true` to bypass the HTTP cache.
