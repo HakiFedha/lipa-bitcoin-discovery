@@ -59,7 +59,15 @@ The fields below describe the service itself. Transport-specific representations
 `ttl` - Optional freshness period for the service description. It helps applications determine when a listing may be stale and does not replace health checks or other liveness signals.
 
 
-## 2.1. Discovery Query Model
+## 2.1. Public Listing Data
+
+Lipa service descriptions are public discovery metadata. They MUST NOT contain private credentials, API keys, authentication tokens, private keys, passwords, customer personal information, customer transaction data, KYC documents, or other confidential information.
+
+Credentials and other sensitive information required to interact with a provider MUST be handled through the provider's own secure authentication mechanism and MUST NOT be published through Lipa Discovery.
+
+Providers should publish only information they are comfortable making publicly discoverable.
+
+## 2.2. Discovery Query Model
 
 Discovery queries are transport-independent. They allow an application to ask for services matching criteria such as country, direction, payment rail, currency, KYC requirements, status, or network.
 
@@ -69,7 +77,7 @@ A transport may support only some filtering operations remotely. When necessary,
 
 The meaning of a query should remain consistent across discovery transports.
 
-## 2.2. Freshness And Liveness
+## 2.3. Freshness And Liveness
 
 Discovery does not require a universal heartbeat mechanism. Providers should update their service descriptions when important information changes.
 
@@ -77,7 +85,7 @@ The ttl field may define a freshness boundary. A health endpoint can provide a m
 
 These signals are distinct and should not be treated as proof that a provider is reliable or that a transaction will succeed.
 
-## 2.3. Trust Signals
+## 2.4. Trust Signals
 
 Trust is separate from basic discovery. Applications may consider signals such as attestations, revocations, recent activity, transaction history, external verification, reputation, or application-specific policy.
 
@@ -193,12 +201,12 @@ Kinds 38384 (attestation) and 38385 (revocation) use an empty `content` string `
 
 ### Attestation Tags (kind 38384)
 
-Required: `d` (replaceable id), `alt` (`Lipa Bitcoin provider attestation (vouch)`), `v` (`0.2`), `p` (target provider pubkey - **64-char hex, not npub**), `rating`. The rating is a transport-specific trust signal and is not a universal Lipa Bitcoin Discovery trust score.
+Required: `d` (replaceable id), `alt` (`Lipa Bitcoin provider attestation (vouch)`), `v` (`0.3`), `p` (target provider pubkey - **64-char hex, not npub**), `rating`. The rating is a transport-specific trust signal and is not a universal Lipa Bitcoin Discovery trust score.
 Optional: `since`, `volume`, `note`.
 
 ### Revocation Tags (kind 38385)
 
-Required: `d`, `alt` (`Lipa Bitcoin provider trust revocation`), `v` (`0.2`), `p` (target pubkey - **64-char hex**), `action` (`revoked`), `reason`.
+Required: `d`, `alt` (`Lipa Bitcoin provider trust revocation`), `v` (`0.3`), `p` (target pubkey - **64-char hex**), `action` (`revoked`), `reason`.
 Optional: `effective`.
 
 > Pubkeys in `p` tags are always lowercase 64-char hex per NIP-01. `npub…` is a display encoding only and must never appear in a tag value.

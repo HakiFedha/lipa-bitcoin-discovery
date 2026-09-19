@@ -24,7 +24,7 @@ The five filterable fields use single-letter tags so relays index them for serve
 |-----|-------------|-----------|---------|
 | `d` | Unique service identifier | — | `provider-a-tz-offramp` |
 | `alt` | NIP-31 human description | — | `Lipa Bitcoin service listing` |
-| `v` | Protocol version | — | `0.2` |
+| `v` | Protocol version | — | `0.3` |
 | `c` | Country (ISO 3166-1 alpha-2) | yes | `TZ` |
 | `o` | Service direction | yes | `off-ramp` / `on-ramp` / `both` |
 | `i` | Inbound rail | yes | `lightning` / `on-chain` / `ecash` |
@@ -58,7 +58,7 @@ A parameterized replaceable event where one provider vouches for another.
 |-----|-------------|---------|
 | `d` | Unique attestation ID | `vouch-3bf0c63fcb934634` |
 | `alt` | NIP-31 human description | `Lipa Bitcoin provider attestation (vouch)` |
-| `v` | Protocol version | `0.2` |
+| `v` | Protocol version | `0.3` |
 | `p` | Hex pubkey of provider being vouched for | `3bf0c63f…459d` (64-char hex) |
 | `rating` | Trust level | `reliable` / `verified` / `trusted` |
 | `since` | Relationship start | `2026-01` |
@@ -73,7 +73,7 @@ An event that withdraws trust from a provider.
 |-----|-------------|---------|
 | `d` | Unique revocation ID | `revoke-deadbeefdeadbeef` |
 | `alt` | NIP-31 human description | `Lipa Bitcoin provider trust revocation` |
-| `v` | Protocol version | `0.2` |
+| `v` | Protocol version | `0.3` |
 | `p` | Hex pubkey of provider being revoked | `deadbeef…beef` (64-char hex) |
 | `action` | Action taken | `revoked` / `suspended` |
 | `reason` | Human-readable reason | `Non-delivery of mobile money payouts` |
@@ -94,9 +94,17 @@ The relay performs the AND match server-side, so the consumer does not download 
 2. Relay returns matching service listings
 3. Consumer fetches attestations for each result (`{ "kinds": [38384], "#p": ["<hex-pubkey>"] }`)
 4. Consumer checks for revocations (`{ "kinds": [38385], "#p": ["<hex-pubkey>"] }`)
-5. Consumer ranks results by trust score, speed, and fee range
-6. Consumer pings top-ranked provider's `/health` endpoint
-7. If healthy, consumer connects to the provider's API for settlement
+5. Consumer may evaluate results using its own trust policy, service requirements, speed, fee range, and other application-specific criteria
+6. Consumer may check a suitable provider's `/health` endpoint
+7. If the provider meets the consumer's requirements, the consumer connects to the provider using the advertised interaction mechanism
+
+## Public listing data
+
+Lipa service listings are public discovery metadata. A listing MUST NOT contain private credentials, API keys, authentication tokens, private keys, passwords, customer personal information, customer transaction data, KYC documents, or other confidential information.
+
+Credentials and other sensitive information required to interact with a provider MUST be handled through the provider's own secure authentication mechanism and MUST NOT be published through Lipa Discovery.
+
+Providers should publish only information they are comfortable making publicly discoverable.
 
 ## Content field
 
@@ -106,7 +114,7 @@ Kind 38383 carries optional extended metadata as a JSON object in `content` (see
 
 Every event carries a `v` tag.
 
-- `v: "0.2"` — current schema (single-letter filter tags `c/o/i/m/f`, `alt`, hex `p` tags).
+- `v: "0.3"` — current schema, including `service_type`/`product` and the single-letter filter tags `c/o/i/m/f`.
 - **Missing `v` tag** — treat as `0.1`, the original draft that used multi-letter filter tags (`country`, `direction`, `rail_out`, …). 0.1 is deprecated; the reference library no longer emits or filters it.
 - **Unknown `v`** (newer than the client understands) — the client SHOULD show a warning, still render the listing using the tags it recognises, and MUST NOT crash on unexpected tags.
 
@@ -120,34 +128,13 @@ Providers are also consumers. Provider A (Tanzania) can query the directory to f
 
 Every provider SHOULD expose a health endpoint returning: status, uptime, average speed, capacity (available/limited/full), and protocol version.
 
-## Trust scoring
+## Trust signals
 
-| Source | Weight |
-|--------|--------|
-| Alliance attestation | +3 (bootstrap, reduces to +1 at maturity) |
-| Individual provider attestation | +1 |
-| Unrecognised key attestation | 0 |
-| Active revocation | -10 |
+Attestations and revocations are public trust signals that applications may use when evaluating discovered services.
 
-### Algorithm (deterministic)
+Lipa Bitcoin Discovery does not require one universal trust score or ranking algorithm. A wallet, application, provider, directory, or other consumer MAY apply its own trust policy based on attestations, revocations, recent activity, external verification, transaction history, service requirements, or other relevant signals.
 
-So that every client computes the same score, the algorithm is fully specified:
-
-1. Fetch all kind-38384 attestations and kind-38385 revocations whose `p` tag is the target pubkey.
-2. **Verify each event's signature.** Discard any that fail.
-3. Keep only events where the `p` tag equals the target. For attestations, discard self-vouches (attester == target).
-4. **Deduplicate by author**, keeping each author's most recent event (by `created_at`). One key counts at most once.
-5. Classify each remaining author into a tier: `ALLIANCE` if it is the alliance pubkey, else `PROVIDER` if it is a recognised provider, else `UNKNOWN`.
-6. Score = Σ attestation weights (ALLIANCE +3, PROVIDER +1, UNKNOWN 0) + Σ revocation penalties. **Revocations count only from recognised keys** (ALLIANCE or PROVIDER) at −10 each; revocations from unknown keys are ignored entirely.
-
-```
-score = (alliance_attestations × 3) + (provider_attestations × 1)
-        − (recognised_revocations × 10)
-```
-
-Suggested display class: `score ≥ 5` → trusted, `score ≥ 1` → reliable, `score ≤ 0` → risky.
-
-Only recognised keys move the score in either direction; unknown keys carry no weight, which provides Sybil resistance.
+Applications SHOULD distinguish discovery from trust. A provider being discoverable does not by itself mean that the provider is trusted or suitable for a particular transaction.
 
 ## Privacy considerations
 
@@ -157,7 +144,7 @@ Fee ranges not exact fees. Amount ranges not real-time liquidity. No transaction
 
 All listing, attestation, and revocation events come from untrusted publishers. Consumers MUST:
 
-- **Verify every event signature** before trusting `pubkey` as an identity. The trust score depends on it.
+- **Verify every event signature** before treating the event's author as authentic or using the event as a trust signal.
 - **Treat all free-text fields as untrusted** — `name`, `note`, `reason`, and any `content` metadata. Escape them before rendering in a UI to avoid injection (e.g. stored XSS in a web client).
 - **Validate `health`/`endpoint` URLs before fetching.** They are attacker-controlled; a naive fetch enables SSRF. Require https and reject private/reserved addresses (loopback, RFC 1918, link-local/metadata `169.254.0.0/16`, and the IPv6 equivalents including IPv4-mapped/NAT64/6to4 forms). Cap response size and bound concurrency.
 
