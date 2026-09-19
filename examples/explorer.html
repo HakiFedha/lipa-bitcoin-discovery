@@ -160,8 +160,8 @@
 <!-- HERO -->
 <div class="wrap hero">
   <div class="eyebrow">DNS for payments · live on Nostr</div>
-  <h1 class="title">Find who moves Bitcoin<br>to mobile money <span class="of">across Africa</span></h1>
-  <p class="tagline">An open directory of off-ramps and on-ramps. Any provider can publish a signed listing; any wallet can discover it — no API keys, no gatekeeper. This page queries public relays live.</p>
+  <h1 class="title">Discover Bitcoin services<br>across African markets</h1>
+  <p class="tagline">An open discovery layer for Bitcoin services serving African markets. Any provider can publish a signed listing; any wallet can discover it — no API keys, no gatekeeper. This page queries public relays live.</p>
   <div class="herostats" id="heroStats">
     <div class="stat"><div class="n" id="hsProviders">—</div><div class="l">PROVIDERS</div></div>
     <div class="stat"><div class="n" id="hsCountries">—</div><div class="l">COUNTRIES</div></div>
@@ -183,6 +183,13 @@
         <button data-v="off-ramp" aria-pressed="false">Off-ramp</button>
         <button data-v="on-ramp" aria-pressed="false">On-ramp</button>
       </div></div>
+    <div class="fld"><label>Service type <span class="tagkey">#s</span></label>
+      <select id="fService"><option value="">Any service</option>
+        <option value="currency-exchange">Currency exchange</option>
+        <option value="remittance">Remittance</option>
+        <option value="airtime-data">Airtime / data</option>
+        <option value="bill-payment">Bill payment</option>
+        <option value="merchant-payment">Merchant payment</option></select></div>
     <div class="fld"><label>Pays out to <span class="tagkey">#m</span></label>
       <select id="fRail"><option value="">Any rail</option>
         <option value="m-pesa">M-Pesa</option><option value="mtn-momo">MTN MoMo</option>
@@ -218,6 +225,15 @@
         <div class="fld"><label>Service id (d-tag)</label><input id="pId" placeholder="provider-a-tz-offramp" value="provider-a-tz-offramp"></div>
         <div class="fld"><label>Country (ISO-2) <span class="tagkey">#c</span></label><input id="pCountry" value="TZ" maxlength="2"></div>
         <div class="fld"><label>Currency (ISO-3) <span class="tagkey">#f</span></label><input id="pCurrency" value="TZS" maxlength="3"></div>
+        <div class="fld"><label>Service type <span class="tagkey">#s</span></label>
+          <select id="pServiceType">
+            <option value="currency-exchange">Currency exchange</option>
+            <option value="remittance">Remittance</option>
+            <option value="airtime-data">Airtime / data</option>
+            <option value="bill-payment">Bill payment</option>
+            <option value="merchant-payment">Merchant payment</option>
+          </select></div>
+        <div class="fld"><label>Product</label><input id="pProduct" placeholder="e.g. Safaricom airtime"></div>
         <div class="fld"><label>Direction <span class="tagkey">#o</span></label>
           <select id="pDir"><option>off-ramp</option><option>on-ramp</option><option>both</option></select></div>
         <div class="fld"><label>Rail in <span class="tagkey">#i</span></label>
@@ -254,10 +270,10 @@
 import * as NT from 'https://esm.sh/nostr-tools@2.23.8';
 
 /* ---- protocol constants (must match lib v0.3) ---- */
-const REPO = 'https://github.com/bmosha00/african-bitcoin-service-discovery-Bitcoin-open-';
+const REPO = 'https://github.com/HakiFedha/lipa-bitcoin-discovery';
 const RELAYS = ['wss://relay.damus.io','wss://relay.nostr.band','wss://nos.lol'];
 const KIND = { LISTING:38383, ATTEST:38384, REVOKE:38385 };
-const T = { country:'c', direction:'o', rail_in:'i', rail_out:'m', currency:'f' };
+const T = { country:'c', direction:'o', rail_in:'i', rail_out:'m', currency:'f', service_type:'s' };
 const COUNTRY = { TZ:'Tanzania',KE:'Kenya',NG:'Nigeria',GH:'Ghana',ZA:'South Africa',UG:'Uganda',
   ZM:'Zambia',RW:'Rwanda',ET:'Ethiopia',SN:'Senegal',EG:'Egypt',CI:"Côte d'Ivoire",CM:'Cameroon',MW:'Malawi' };
 
@@ -306,7 +322,8 @@ function parseListing(ev){
     name:t.name||'(unnamed)', country:t[T.country]||'', direction:t[T.direction]||'', rail_in:t[T.rail_in]||'',
     rail_out:t[T.rail_out]||'', currency:t[T.currency]||'', endpoint:t.endpoint||'', health:t.health||'',
     status:t.status||'', fee:t.fee_range||null, speed:t.speed||null, min:t.min_amount||null, max:t.max_amount||null,
-    network:t.network||null, kyc:t.kyc||null, protocols:t.protocols||null };
+    network:t.network||null, kyc:t.kyc||null, protocols:t.protocols||null,
+    service_type:t[T.service_type]||'currency-exchange', product:t.product||null };
 }
 const isOurs = ev => ev.tags.some(t=>t[0]===T.country) && ev.tags.some(t=>t[0]==='name');
 
@@ -314,6 +331,7 @@ async function fetchListings(filters={}){
   const f = { kinds:[KIND.LISTING], limit:500 };
   if(filters.country) f['#'+T.country]=[filters.country.toUpperCase()];
   if(filters.direction) f['#'+T.direction]=[filters.direction];
+  if(filters.service_type) f['#'+T.service_type]=[filters.service_type];
   if(filters.rail_out) f['#'+T.rail_out]=[filters.rail_out];
   const evs = await q(f);
   const seen = new Set(); const out=[];
@@ -380,6 +398,8 @@ function cardHTML(p, idx){
       <span class="pill">${esc(p.direction||'—')}</span>
       ${p.fee?`<span class="pill">${esc(p.fee)}%</span>`:''}
       ${p.speed?`<span class="pill">${esc(p.speed)}</span>`:''}
+      ${p.service_type?`<span class="pill">${esc(p.service_type)}</span>`:''}
+      ${p.product?`<span class="pill">${esc(p.product)}</span>`:''}
       ${p.kyc?`<span class="pill">kyc:${esc(p.kyc)}</span>`:''}
     </div>
     <div class="cardfoot">
@@ -425,9 +445,9 @@ async function runDiscover(){
 }
 
 function readFilters(){
-  return { country:$('#fCountry').value, direction:$('#fDir').querySelector('[aria-pressed=true]').dataset.v, rail_out:$('#fRail').value };
+  return { country:$('#fCountry').value, direction:$('#fDir').querySelector('[aria-pressed=true]').dataset.v, service_type:$('#fService').value, rail_out:$('#fRail').value };
 }
-function buildEcho(f){ const o={kinds:[38383]}; if(f.country)o['#c']=[f.country.toUpperCase()]; if(f.direction)o['#o']=[f.direction]; if(f.rail_out)o['#m']=[f.rail_out]; o.limit=500; return o; }
+function buildEcho(f){ const o={kinds:[38383]}; if(f.country)o['#c']=[f.country.toUpperCase()]; if(f.direction)o['#o']=[f.direction]; if(f.service_type)o['#s']=[f.service_type]; if(f.rail_out)o['#m']=[f.rail_out]; o.limit=500; return o; }
 
 /* ---- detail sheet (with naddr routing) ---- */
 function naddrOf(p){ try{ return NT.nip19.naddrEncode({identifier:p.dtag||'',pubkey:p.pubkey,kind:KIND.LISTING,relays:RELAYS}); }catch{ return ''; } }
@@ -441,6 +461,8 @@ async function openDetail(p){
       <div class="mono faint" style="font-size:12px">${esc(COUNTRY[p.country]||p.country)} · ${esc(p.direction)}</div></div>
       <span class="badge new" id="dBadge" style="margin-left:auto">Listed</span></div>
     <dl class="kv">
+      <dt>service type</dt><dd>${esc(p.service_type||'currency-exchange')}</dd>
+      ${p.product?`<dt>product</dt><dd>${esc(p.product)}</dd>`:''}
       <dt>rail</dt><dd>${railLabel(p.rail_in)} → ${railLabel(p.rail_out)}</dd>
       <dt>currency</dt><dd>${esc(p.currency||'—')}</dd>
       <dt>fee range</dt><dd>${esc(p.fee||'—')}${p.fee?'%':''}</dd>
@@ -522,10 +544,12 @@ async function doPublish(){
   const tmpl={ kind:KIND.LISTING, created_at:now, content:'{}', tags:[
     ['d',v('pId')], ['alt','Lipa Bitcoin service listing'], ['v','0.3'],
     [T.country, v('pCountry').toUpperCase()], [T.direction, $('#pDir').value],
+    [T.service_type, $('#pServiceType').value],
     [T.rail_in, $('#pRailIn').value], [T.rail_out, $('#pRailOut').value],
     [T.currency, v('pCurrency').toUpperCase()],
     ['name', v('pName')], ['endpoint', v('pEndpoint')], ['health', v('pHealth')], ['status','active'],
-    ['fee_range', v('pFee')||''], ['speed','seconds'], ['ttl','90000'], ['kyc','none']
+    ['fee_range', v('pFee')||''], ['speed','seconds'], ['ttl','90000'], ['kyc','none'],
+    ...($('#pProduct').value.trim() ? [['product', v('pProduct')]] : [])
   ].filter(t=>t[1]!=='') };
   $('#publishBtn').disabled=true; $('#pubEcho').textContent='Signing…';
   try{
@@ -582,7 +606,7 @@ $('#fDir').querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>
   b.setAttribute('aria-pressed','true');
 }));
 $('#runBtn').addEventListener('click',runDiscover);
-$('#clearBtn').addEventListener('click',()=>{ $('#fCountry').value=''; $('#fRail').value='';
+$('#clearBtn').addEventListener('click',()=>{ $('#fCountry').value=''; $('#fRail').value=''; $('#fService').value='';
   $('#fDir').querySelectorAll('button').forEach((x,i)=>x.setAttribute('aria-pressed',String(i===0))); runDiscover(); });
 $('#connectNip07').addEventListener('click',useNip07);
 $('#genKey').addEventListener('click',useTestKey);
