@@ -108,7 +108,7 @@ All other tags below are display/metadata and are not used in relay filters.
 Unique identifier for this service listing. Format: `{provider}-{country}-{direction}`
 
 #### `alt` - Human description (NIP-31)
-Always `African Bitcoin payment service listing`. Lets generic Nostr clients render the event meaningfully.
+Always `Lipa Bitcoin service listing`. Lets generic Nostr clients render the event meaningfully.
 
 #### `v` - Data model version
 Version of the canonical service description represented by this Nostr listing. Clients may warn or reject on unsupported versions. Current version: `0.3`, which added `service_type`/`product`. A `0.2` listing is a valid `currency-exchange` listing under `0.3` and does not need to be republished.
@@ -193,12 +193,12 @@ Kinds 38384 (attestation) and 38385 (revocation) use an empty `content` string `
 
 ### Attestation Tags (kind 38384)
 
-Required: `d` (replaceable id), `alt` (`African Bitcoin provider attestation (vouch)`), `v` (`0.2`), `p` (target provider pubkey - **64-char hex, not npub**), `rating`. The rating is a transport-specific trust signal and is not a universal Lipa Bitcoin Discovery trust score.
+Required: `d` (replaceable id), `alt` (`Lipa Bitcoin provider attestation (vouch)`), `v` (`0.2`), `p` (target provider pubkey - **64-char hex, not npub**), `rating`. The rating is a transport-specific trust signal and is not a universal Lipa Bitcoin Discovery trust score.
 Optional: `since`, `volume`, `note`.
 
 ### Revocation Tags (kind 38385)
 
-Required: `d`, `alt` (`African Bitcoin provider trust revocation`), `v` (`0.2`), `p` (target pubkey - **64-char hex**), `action` (`revoked`), `reason`.
+Required: `d`, `alt` (`Lipa Bitcoin provider trust revocation`), `v` (`0.2`), `p` (target pubkey - **64-char hex**), `action` (`revoked`), `reason`.
 Optional: `effective`.
 
 > Pubkeys in `p` tags are always lowercase 64-char hex per NIP-01. `npub…` is a display encoding only and must never appear in a tag value.

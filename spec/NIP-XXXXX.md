@@ -1,4 +1,4 @@
-# NIP-XXXXX: African Bitcoin Payment Service Discovery
+# NIP-XXXXX: Lipa Bitcoin Service Discovery Protocol
 
 `draft` `optional`
 
@@ -23,7 +23,7 @@ The five filterable fields use single-letter tags so relays index them for serve
 | Tag | Description | Filterable | Example |
 |-----|-------------|-----------|---------|
 | `d` | Unique service identifier | — | `provider-a-tz-offramp` |
-| `alt` | NIP-31 human description | — | `African Bitcoin payment service listing` |
+| `alt` | NIP-31 human description | — | `Lipa Bitcoin service listing` |
 | `v` | Protocol version | — | `0.2` |
 | `c` | Country (ISO 3166-1 alpha-2) | yes | `TZ` |
 | `o` | Service direction | yes | `off-ramp` / `on-ramp` / `both` |
@@ -57,7 +57,7 @@ A parameterized replaceable event where one provider vouches for another.
 | Tag | Description | Example |
 |-----|-------------|---------|
 | `d` | Unique attestation ID | `vouch-3bf0c63fcb934634` |
-| `alt` | NIP-31 human description | `African Bitcoin provider attestation (vouch)` |
+| `alt` | NIP-31 human description | `Lipa Bitcoin provider attestation (vouch)` |
 | `v` | Protocol version | `0.2` |
 | `p` | Hex pubkey of provider being vouched for | `3bf0c63f…459d` (64-char hex) |
 | `rating` | Trust level | `reliable` / `verified` / `trusted` |
@@ -72,7 +72,7 @@ An event that withdraws trust from a provider.
 | Tag | Description | Example |
 |-----|-------------|---------|
 | `d` | Unique revocation ID | `revoke-deadbeefdeadbeef` |
-| `alt` | NIP-31 human description | `African Bitcoin provider trust revocation` |
+| `alt` | NIP-31 human description | `Lipa Bitcoin provider trust revocation` |
 | `v` | Protocol version | `0.2` |
 | `p` | Hex pubkey of provider being revoked | `deadbeef…beef` (64-char hex) |
 | `action` | Action taken | `revoked` / `suspended` |

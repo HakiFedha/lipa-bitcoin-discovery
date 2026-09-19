@@ -25,12 +25,3 @@ The HTTP transport caches `/v1/services` responses for 30 seconds, including emp
 If a query is made immediately before a matching listing is published, the cached empty response may therefore be returned for up to 30 seconds even though the listing is already available from the underlying discovery transport.
 
 This is expected cache behaviour, not a discovery failure. When testing immediately after publishing a new listing, use `noCache=true` to bypass the HTTP cache.
-
-## Branding Consistency
-
-Some example scripts (`query-providers.js`, `pilot-bit2kwacha.js`, and possibly
-others) print a hardcoded banner "=== African Bitcoin Service Discovery
-Protocol ===", left over from before the project was renamed. The project's
-current name is "Lipa Bitcoin Service Discovery" (matching the
-`lipa-bitcoin-discovery` repo/package name). Update these banner strings for
-consistency in a small, standalone cleanup commit.

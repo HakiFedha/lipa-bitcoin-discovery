@@ -1,6 +1,6 @@
 # Contributing
 
-This protocol is open infrastructure for African Bitcoin payment companies. Contributions are welcome from alliance members and the broader community.
+This protocol is open infrastructure for discovering Bitcoin-related services serving African markets. Contributions are welcome from the broader community.
 
 ## How to contribute
 
@@ -8,7 +8,7 @@ This protocol is open infrastructure for African Bitcoin payment companies. Cont
 1. Open an issue describing the change
 2. Fork the repo and create a branch
 3. Submit a pull request with your proposed changes
-4. Alliance members review and discuss
+4. Maintainers and contributors review and discuss
 5. Changes merged after rough consensus
 
 ### New tag values
@@ -19,7 +19,7 @@ The publisher and querier libraries live in the lib/ directory. Bug fixes and im
 
 ## Discussion
 
-- **Alliance Signal group** — Primary discussion channel for active members
+- **Alliance Signal group** — Coordination channel for Alliance participants
 - **GitHub Issues** — For spec questions, proposals, and bug reports
 - **GitHub Discussions** — For open-ended questions and ideas
 

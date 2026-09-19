@@ -757,4 +757,4 @@ The project is intended to remain open-source and interoperable so that independ
 
 ---
 
-**Open protocol. Multiple transports. No mandatory central registry. Built for African Bitcoin payments.**
+**Open protocol. Multiple transports. No mandatory central registry. Built for Bitcoin services serving African markets.**
