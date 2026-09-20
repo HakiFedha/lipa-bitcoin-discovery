@@ -8,7 +8,8 @@ The client only needs the public HTTP API. A developer could build a similar int
 
 ```bash
 node find-service.js ZM currency-exchange m-pesa
-node find-service.js ZM airtime-data
+node find-service.js ZM currency-exchange mtn-momo on-ramp
+node find-service.js ZM airtime-data off-ramp
 ```
 
 Arguments:
@@ -16,6 +17,7 @@ Arguments:
 - `COUNTRY` — ISO country code, such as `ZM` or `TZ`.
 - `SERVICE_TYPE` — service type such as `currency-exchange`, `remittance`, or `airtime-data`.
 - `rail_out` — optional output rail such as `m-pesa`.
+- `direction` — optional value-flow direction: `on-ramp`, `off-ramp`, or `both`. Defaults to `off-ramp`.
 
 The example queries the HTTP discovery endpoint and displays the services that match the request.
 

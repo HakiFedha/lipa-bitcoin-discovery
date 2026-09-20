@@ -9,7 +9,8 @@
  *
  * Usage:
  *   node find-service.js ZM currency-exchange m-pesa
- *   node find-service.js ZM airtime-data
+ *   node find-service.js ZM currency-exchange mtn-momo on-ramp
+ *   node find-service.js ZM airtime-data off-ramp
  */
 
 const DISCOVERY_API = 'https://lipa-bitcoin-discovery.onrender.com';
@@ -17,9 +18,10 @@ const DISCOVERY_API = 'https://lipa-bitcoin-discovery.onrender.com';
 const country = process.argv[2];
 const serviceType = process.argv[3];
 const railOut = process.argv[4];
+const direction = process.argv[5] || 'off-ramp';
 
 if (!country || !serviceType) {
-  console.error('Usage: node find-service.js <COUNTRY> <SERVICE_TYPE> [rail_out]');
+  console.error('Usage: node find-service.js <COUNTRY> <SERVICE_TYPE> [rail_out] [direction]');
   console.error('Example: node find-service.js ZM currency-exchange m-pesa');
   process.exit(1);
 }
@@ -29,10 +31,10 @@ if (!country || !serviceType) {
  * optionally, an output rail. This is the HTTP integration surface
  * an application can use without knowing the underlying discovery transport.
  */
-async function findServices(countryCode, type, rail) {
+async function findServices(countryCode, type, rail, serviceDirection) {
   const url = new URL('/v1/services', DISCOVERY_API);
   url.searchParams.set('country', countryCode);
-  url.searchParams.set('direction', 'off-ramp');
+  url.searchParams.set('direction', serviceDirection);
   url.searchParams.set('service_type', type);
   if (rail) url.searchParams.set('rail_out', rail);
 
@@ -44,9 +46,9 @@ async function findServices(countryCode, type, rail) {
 }
 
 async function main() {
-  console.log(`Application: looking for ${serviceType} services in ${country}${railOut ? ` via ${railOut}` : ''}...\n`);
+  console.log(`Application: looking for ${direction} ${serviceType} services in ${country}${railOut ? ` via ${railOut}` : ''}...\n`);
 
-  const result = await findServices(country, serviceType, railOut);
+  const result = await findServices(country, serviceType, railOut, direction);
 
   if (result.count === 0) {
     console.log('No providers found for this query.');
