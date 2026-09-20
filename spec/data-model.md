@@ -26,7 +26,7 @@ The fields below describe the service itself. Transport-specific representations
 
 `countries` - Countries where the service operates, using ISO 3166-1 alpha-2 country codes.
 
-`directions` - Service direction: `on-ramp`, `off-ramp`, or `both`.
+`directions` - Direction of value flow from the customer's perspective: `on-ramp` means the customer provides non-Bitcoin value and receives Bitcoin; `off-ramp` means the customer provides Bitcoin and receives non-Bitcoin value or a service; `both` means the service supports both directions.
 
 `service_type` - The kind of service being offered: `currency-exchange` (buying or selling Bitcoin for fiat currency), `remittance` (Bitcoin sent by one party, fiat delivered to a different recipient), `airtime-data` (Bitcoin converted directly into mobile airtime or a data bundle), `bill-payment` (Bitcoin used to settle a bill or subscription), or `merchant-payment` (Bitcoin accepted directly for goods or services). Defaults to `currency-exchange` when absent, so every listing published before this field existed remains valid and correctly described without republishing.
 

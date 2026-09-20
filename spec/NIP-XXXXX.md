@@ -26,7 +26,7 @@ The five filterable fields use single-letter tags so relays index them for serve
 | `alt` | NIP-31 human description | — | `Lipa Bitcoin service listing` |
 | `v` | Protocol version | — | `0.3` |
 | `c` | Country (ISO 3166-1 alpha-2) | yes | `TZ` |
-| `o` | Service direction | yes | `off-ramp` / `on-ramp` / `both` |
+| `o` | Direction of value flow from the customer's perspective | yes | `off-ramp` / `on-ramp` / `both` |
 | `i` | Inbound rail | yes | `lightning` / `on-chain` / `ecash` |
 | `m` | Outbound rail | yes | `m-pesa` / `mtn-momo` / `airtel-money` / `bank` / `cash` |
 | `f` | Fiat currency (ISO 4217) | yes | `TZS` |
