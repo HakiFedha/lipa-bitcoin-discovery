@@ -8,7 +8,7 @@
  * never seen this repository's Nostr implementation.
  *
  * Usage:
- *   node find-service.js ZM currency-exchange m-pesa
+ *   node find-service.js ZM currency-exchange mtn-momo
  *   node find-service.js ZM currency-exchange mtn-momo on-ramp
  *   node find-service.js ZM airtime-data off-ramp
  */
@@ -22,7 +22,7 @@ const direction = process.argv[5] || 'off-ramp';
 
 if (!country || !serviceType) {
   console.error('Usage: node find-service.js <COUNTRY> <SERVICE_TYPE> [rail_out] [direction]');
-  console.error('Example: node find-service.js ZM currency-exchange m-pesa');
+  console.error('Example: node find-service.js ZM currency-exchange mtn-momo');
   process.exit(1);
 }
 

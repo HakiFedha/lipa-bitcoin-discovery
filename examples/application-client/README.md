@@ -7,7 +7,7 @@ The client only needs the public HTTP API. A developer could build a similar int
 ## Usage
 
 ```bash
-node find-service.js ZM currency-exchange m-pesa
+node find-service.js ZM currency-exchange mtn-momo
 node find-service.js ZM currency-exchange mtn-momo on-ramp
 node find-service.js ZM airtime-data off-ramp
 ```
