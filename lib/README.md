@@ -1,14 +1,25 @@
 # lipa-bitcoin-discovery
 
-Open protocol for discovering Bitcoin payment services across Africa. Publish a service listing, discover providers, and attest trust — all on [Nostr](https://nostr.com), no servers of your own, no API keys, no registration.
+Open protocol for discovering Bitcoin payment services across Africa. Publish a service listing, discover providers, and publish signed trust signals — all on [Nostr](https://nostr.com), no servers of your own, no API keys, no registration.
 
-Think of it as DNS for payments: it turns `off-ramp, Tanzania, M-Pesa` into a ranked list of providers that can handle it.
+Think of it as DNS for payments: it turns `off-ramp, Tanzania, M-Pesa` into a list of providers that can handle it.
 
 - **Publish** — advertise what your service can do (kind `38383`)
 - **Discover** — find providers by country, direction, and rail (client-side filtered)
-- **Attest** — vouch for partners and compute trust scores (kinds `38384` / `38385`)
+- **Attest** — publish signed attestations and revocations about providers (kinds `38384` / `38385`)
 
 Full protocol details: [`../spec/`](../spec). Architecture and rationale: [`../docs/PROJECT_BLUEPRINT.md`](../docs/PROJECT_BLUEPRINT.md).
+
+**See it work end to end, right now, no setup:**
+
+```bash
+node examples/local-e2e-demo.js
+```
+
+A self-contained, local simulation (no real relays, no real Lightning node)
+showing the full arc: an application discovers a provider it has never heard
+of, reads its advertised interaction capability, and completes a simulated
+LNURL settlement — all in one run.
 
 ---
 
@@ -59,7 +70,7 @@ echo "NOSTR_PRIVATE_KEY=a1b2c3d4..." >> .env
 
 ## 3. Publish a service listing
 
-Advertise your service so any wallet or provider can find you. Only the required fields are mandatory; the rest sharpen ranking and matching.
+Advertise your service so any wallet or provider can find you. Only the required fields are mandatory; the rest provide additional information for filtering and consumer-side decisions.
 
 ```js
 const { Publisher } = require('lipa-bitcoin-discovery');
@@ -125,9 +136,9 @@ Shortcuts: `findByCountry('KE')`, `findOffRamp('TZ', 'm-pesa')`, `findOnRamp('TZ
 
 ---
 
-## 5. Attest — vouch, score, revoke
+## 5. Attest — publish trust signals
 
-Discovery without trust is a spam list. Providers vouch for each other; consumers rank by the resulting trust score.
+Attestations and revocations are signed public trust signals. They let providers describe their experience with other providers, while consumers decide how much weight to give those signals. Lipa does not impose a universal trust score or ranking.
 
 ```js
 const { Attestation } = require('lipa-bitcoin-discovery');
@@ -156,7 +167,7 @@ await attestation.revoke(badPubkey, 'Non-delivery after 3 confirmed complaints')
 attestation.close();
 ```
 
-**Scoring weights:** alliance attestation `+3`, recognised provider `+1`, unknown key `0`, active revocation `-10`. Only recognised keys move the score — in either direction. An unknown key can neither inflate a score nor tank one (sybil resistance).
+**Reference scoring weights:** the optional `score()` helper uses alliance attestation `+3`, recognised provider `+1`, unknown key `0`, and active revocation `-10`. These weights are a consumer-side policy, not a universal Lipa trust rating. Unknown keys carry no weight in this reference calculation.
 
 ---
 
