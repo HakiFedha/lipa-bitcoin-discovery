@@ -747,11 +747,11 @@ The architectural goal is broader than Nostr: compatible discovery should be pos
 
 ## 23. Current Status
 
-The repository currently contains a working Nostr-based discovery implementation and the protocol architecture is being separated from that transport.
+The repository contains a working Nostr-based discovery implementation and a working HTTP Discovery API. The HTTP transport exposes the same canonical service representation through a documented application interface.
 
-The immediate priority is to define the transport-neutral service description and discovery model clearly before implementing additional transports.
+The Nostr transport remains the first reference transport, while HTTP provides an independent application-facing discovery interface. The architecture is transport-independent, allowing wallets, providers, directories and applications to use compatible discovery transports without being coupled to the reference implementation.
 
-The Nostr implementation should continue to serve as a practical reference while the core protocol is formalised.
+The repository includes working examples for Nostr discovery, HTTP discovery, independent application clients, independent wallet clients and local end-to-end discovery and settlement flows.
 
 The project is intended to remain open-source and interoperable so that independent wallets, providers, directories and applications can implement discovery without needing permission from the Lipa project.
 
