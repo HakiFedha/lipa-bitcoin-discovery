@@ -6,7 +6,7 @@
 - [ ] Define the transport abstraction and compatibility rules
 - [ ] Define freshness, liveness, trust, versioning, and security principles
 - [ ] Document Nostr as the first reference transport
-- [ ] Define the HTTP/API discovery transport
+- [x] Define the HTTP/API discovery transport
 - [ ] Circulate the specification among alliance members for feedback
 - [ ] Finalise the Nostr tag vocabulary and transport rules
 - [ ] Prepare a Nostr community specification or NIP if appropriate
@@ -15,7 +15,7 @@
 - [ ] Build the common discovery interface and reference library
 - [ ] Build the Nostr discovery adapter
 - [ ] Build the Nostr publisher and querier
-- [ ] Build the HTTP/API discovery adapter
+- [x] Build the HTTP/API discovery adapter
 - [ ] Implement a provider-hosted HTTP/API discovery endpoint
 - [ ] Add interoperability tests across discovery transports
 - [ ] Publish example service descriptions and discovery queries
