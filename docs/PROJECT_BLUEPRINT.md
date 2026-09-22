@@ -425,9 +425,7 @@ docs/
 **Current implementation status:** The repository today still uses the original flat
 structure (`lib/src/publisher.js`, `querier.js`, `attestation.js`, `config.js`,
 `keys.js`, `index.js`), which is Nostr-specific throughout. The `core/transports/trust`
-layout above is the intended direction, not the current state. The split into a
-transport-neutral core is planned to happen once an HTTP/API transport exists to
-validate the abstraction, rather than being refactored in advance of a second transport.
+layout above is the intended direction, not the current state. The HTTP/API transport now provides a second discovery interface, validating the transport-independent abstraction. The current implementation remains organised around the original Nostr-oriented structure, while further separation into transport-neutral core, transport adapters and trust components can proceed incrementally.
 
 The exact repository structure may change as the implementation develops. The architectural separation is the important part.
 
@@ -644,7 +642,7 @@ Maintain and refine the existing Nostr implementation as the first reference tra
 
 ### Phase 3: HTTP/API Transport
 
-Define an HTTP/API representation of the same service descriptions and queries.
+Implement and document an HTTP Discovery API that exposes the same service descriptions and queries through a transport-independent application interface. This phase is now implemented, including an independent application client and wallet client demonstration.
 
 ### Phase 4: Directory Integration
 
