@@ -213,7 +213,7 @@ Optional: `effective`.
 
 ## 4. Discovery Transports Beyond Nostr
 
-HTTP/API is the planned second reference discovery transport. Other transports may include provider-hosted discovery documents, curated directories, or other decentralised mechanisms.
+HTTP/API is the second reference discovery transport, exposing `GET /v1/services` and `GET /v1/health` as a read-through cache over Nostr. Provider-hosted discovery is the third: a provider serves its own service document at `GET /.well-known/lipa`. Other transports may include curated directories or other decentralised mechanisms.
 
 A new transport should define how it publishes or exposes service descriptions, accepts discovery queries, filters results, handles pagination, handles freshness, manages authentication where required, handles rate limits, reports errors, and manages versioning.
 

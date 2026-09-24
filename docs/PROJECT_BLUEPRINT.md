@@ -198,9 +198,9 @@ An API may support queries such as:
 
 A provider may publish its own service description at a predictable web location.
 
-A future specification could define mechanisms such as a `.well-known` resource for this purpose.
+A reference implementation serves a provider-owned service document at `GET /.well-known/lipa`, with CORS enabled so browser-based applications can read it. The document uses the canonical service description.
 
-This would allow software to discover information directly from a provider without requiring the provider to register with a central directory.
+This allows software to discover information directly from a provider without requiring the provider to register with a central directory. Because the document is published by the provider itself, it is a claim and not a verification, so applications should weigh it alongside other trust signals.
 
 ### Directory and Index
 
