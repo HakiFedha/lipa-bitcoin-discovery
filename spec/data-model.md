@@ -233,8 +233,3 @@ The settlement specifications in this repository remain separate and should not 
 The canonical data model and individual discovery transports may have separate versions. A transport version describes how the transport represents or retrieves the canonical model. A data model version describes changes to the underlying service description.
 
 Implementations should fail safely when they encounter an unsupported version. Breaking changes should use a new version rather than silently changing the meaning of existing fields.
-
-
-## 7. Tag Vocabulary Governance
-
-New tag values can be proposed by any alliance member via GitHub issue. Discussion period: 7 days. If no objections, the value is added.
