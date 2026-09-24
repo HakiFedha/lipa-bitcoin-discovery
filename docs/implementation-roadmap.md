@@ -1,6 +1,6 @@
 # Implementation Roadmap
 
-## Phase 1: Core Specification (Month 1–2)
+## Phase 1: Core Specification
 - [ ] Finalise the canonical service description
 - [ ] Finalise the transport-independent discovery query model
 - [ ] Define the transport abstraction and compatibility rules
@@ -11,28 +11,28 @@
 - [ ] Finalise the Nostr tag vocabulary and transport rules
 - [ ] Prepare a Nostr community specification or NIP if appropriate
 
-## Phase 2: Reference Implementation (Month 3–4)
+## Phase 2: Reference Implementation
 - [ ] Build the common discovery interface and reference library
-- [ ] Build the Nostr discovery adapter
-- [ ] Build the Nostr publisher and querier
+- [x] Build the Nostr discovery adapter
+- [x] Build the Nostr publisher and querier
 - [x] Build the HTTP/API discovery adapter
-- [ ] Implement a provider-hosted HTTP/API discovery endpoint
+- [x] Implement a provider-hosted HTTP/API discovery endpoint
 - [ ] Add interoperability tests across discovery transports
-- [ ] Publish example service descriptions and discovery queries
+- [x] Publish example service descriptions and discovery queries
 - [ ] Alliance members publish test service descriptions through the reference transports
-- [ ] Test publish → discover → filter → verify round-trip flows
+- [x] Test publish → discover → filter → verify round-trip flows
 
-## Phase 3: Integration (Month 5–6)
+## Phase 3: Integration
 - [ ] Each provider integrates a discovery publisher or provider-hosted discovery endpoint
 - [ ] Each provider deploys a `/health` endpoint where appropriate
 - [ ] First wallet partner integrates discovery
 - [ ] Demonstrate discovery through both Nostr and HTTP/API
 - [ ] Demonstrate provider-to-provider discovery across a cross-border corridor
-- [ ] Add optional attestations and other trust signals
+- [x] Add optional attestations and other trust signals
 - [ ] Record and share a proof-of-concept demonstration
 
 
-## Phase 4: Production (Month 7+)
+## Phase 4: Production
 - [ ] Open discovery to additional providers
 - [ ] Support additional wallet and application integrations
 - [ ] Build a public explorer as a consumer of the discovery protocol
