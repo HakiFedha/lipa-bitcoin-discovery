@@ -213,11 +213,47 @@ Optional: `effective`.
 
 ## 4. Discovery Transports Beyond Nostr
 
-HTTP/API is the second reference discovery transport, exposing `GET /v1/services` and `GET /v1/health` as a read-through cache over Nostr. Provider-hosted discovery is the third: a provider serves its own service document at `GET /.well-known/lipa`. Other transports may include curated directories or other decentralised mechanisms.
+### 4.1. HTTP/API Transport
 
-A new transport should define how it publishes or exposes service descriptions, accepts discovery queries, filters results, handles pagination, handles freshness, manages authentication where required, handles rate limits, reports errors, and manages versioning.
+HTTP/API is a discovery transport exposing `GET /v1/services` and `GET /v1/health` as a read-through cache over Nostr.
 
-A transport should not redefine the meaning of the canonical service description.
+### 4.2. Provider-Hosted Transport (`/.well-known/lipa`)
+
+Provider-hosted discovery allows a provider to host its own service discovery document directly at `GET /.well-known/lipa`.
+
+#### Document Format
+
+A provider-hosted discovery document is a JSON object with the following top-level fields:
+
+- `protocol` (string, required): Protocol identifier. MUST be `"lipa"`.
+- `version` (string, required): Protocol data model version (e.g. `"0.3"`).
+- `provider` (object, required):
+  - `name` (string, required): Human-readable provider name.
+  - `pubkey` (string, optional): 64-character hex Nostr public key identifying the provider.
+- `services` (array, required): List of service descriptions offered by the provider.
+
+#### Service Description Objects
+
+Each object in the `services` array represents a service listing using the canonical service description fields defined in Section 2:
+
+- `id` (string, required): Stable service identifier.
+- `countries` (array of strings, required): ISO 3166-1 alpha-2 country codes where the service operates.
+- `direction` (string, required): `"on-ramp"`, `"off-ramp"`, or `"both"`.
+- `service_type` (string, optional): Service category (`"currency-exchange"`, `"remittance"`, `"airtime-data"`, `"bill-payment"`, `"merchant-payment"`). Defaults to `"currency-exchange"`.
+- `product` (string, optional): Description of specific product or carrier.
+- `rails` (object, required):
+  - `in` (array of strings, required): Inbound payment rails.
+  - `out` (array of strings, required for exchange/remittance): Outbound payment rails.
+- `currencies` (array of strings, required): ISO 4217 currency codes supported.
+- `status` (string, required): `"active"`, `"inactive"`, or `"maintenance"`.
+- Optional canonical fields: `endpoint`, `health`, `network`, `mobile_network`, `min_amount`, `max_amount`, `fee_range`, `speed`, `protocols`, `lnaddr`, `kyc`, `ttl`.
+
+#### Transport Behavior
+
+- Endpoint path: `GET /.well-known/lipa`
+- Content-Type: `application/json`
+- CORS: Endpoints MUST include `Access-Control-Allow-Origin: *` to allow web and mobile app discovery.
+- Error Handling: Unknown routes or invalid requests MUST return JSON formatted error responses (e.g. `{ "error": "Not Found" }`) with appropriate HTTP status codes.
 
 ## 5. Settlement Is Separate
 
