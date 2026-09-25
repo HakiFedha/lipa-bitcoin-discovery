@@ -245,7 +245,8 @@ Each object in the `services` array represents a service listing using the canon
   - `in` (array of strings, required): Inbound payment rails.
   - `out` (array of strings, required for exchange/remittance): Outbound payment rails.
 - `currencies` (array of strings, required): ISO 4217 currency codes supported.
-- `status` (string, required): `"active"`, `"inactive"`, or `"maintenance"`.
+- `status` (string, required): `"active"`, `"inactive"`, or `"paused"`.
+- `status_reason` (string, optional): Only meaningful when `status` is `"paused"`. One of `"out_of_float"`, `"maintenance"`, `"regulatory"`, or `"other"`.
 - Optional canonical fields: `endpoint`, `health`, `network`, `mobile_network`, `min_amount`, `max_amount`, `fee_range`, `speed`, `protocols`, `lnaddr`, `kyc`, `ttl`.
 
 #### Transport Behavior

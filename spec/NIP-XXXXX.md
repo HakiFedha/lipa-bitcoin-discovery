@@ -39,7 +39,8 @@ The five filterable fields use single-letter tags so relays index them for serve
 
 | Tag | Description | Example |
 |-----|-------------|---------|
-| `network` | Mobile network operator | `vodacom-tz` |
+| `network` | Bitcoin network or environment | `mainnet` |
+| `mobile_network` | Mobile network operator | `vodacom-tz` |
 | `min_amount` | Minimum in local currency | `2500` |
 | `max_amount` | Maximum in local currency | `1000000` |
 | `fee_range` | Fee percentage range | `1.5-2.2` |
@@ -47,6 +48,8 @@ The five filterable fields use single-letter tags so relays index them for serve
 | `ttl` | Seconds until stale | `90000` (25 hours) |
 | `protocols` | Supported Lightning protocols | `bolt11,nwc,lnurl` |
 | `kyc` | KYC requirement level | `none` / `light` / `full` |
+
+> `network` describes the Bitcoin environment (mainnet/testnet), independent of which rail (`i` tag: `lightning`, `on-chain`, `ecash`) the service uses. The two combine: `i: lightning` + `network: testnet` means Lightning on testnet.
 
 **Liveness:** Providers SHOULD republish only on change (fee, status, rail, endpoint). Consumers SHOULD treat listings older than `ttl` as stale and use the `/health` endpoint as the real-time liveness signal. There is no fixed-interval heartbeat: replaceable events plus a health endpoint make periodic re-publishing redundant.
 
@@ -75,7 +78,7 @@ An event that withdraws trust from a provider.
 | `alt` | NIP-31 human description | `Lipa Bitcoin provider trust revocation` |
 | `v` | Protocol version | `0.3` |
 | `p` | Hex pubkey of provider being revoked | `deadbeef…beef` (64-char hex) |
-| `action` | Action taken | `revoked` / `suspended` |
+| `action` | Action taken | `revoked` |
 | `reason` | Human-readable reason | `Non-delivery of mobile money payouts` |
 | `effective` | Effective date | `2026-09-15` |
 
