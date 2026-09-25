@@ -1,6 +1,6 @@
 # Off-Ramp Settlement Profile — LNURL (v0.2 — Draft)
 
-> **Status:** Draft for alliance feedback. Scope: **off-ramp only** (Bitcoin → mobile money / fiat). On-ramp is out of scope (see below).
+> **Status:** Draft for community feedback. Scope: **off-ramp only** (Bitcoin → mobile money / fiat). On-ramp is out of scope (see below).
 
 ## Motivation
 

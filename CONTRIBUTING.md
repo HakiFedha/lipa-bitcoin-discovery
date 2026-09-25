@@ -19,7 +19,6 @@ The publisher and querier libraries live in the lib/ directory. Bug fixes and im
 
 ## Discussion
 
-- **Alliance Signal group** — Coordination channel for Alliance participants
 - **GitHub Issues** — For spec questions, proposals, and bug reports
 - **GitHub Discussions** — For open-ended questions and ideas
 

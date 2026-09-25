@@ -56,4 +56,4 @@ Consumer (wallet or provider)       Provider
 2. Should there be a standard refund endpoint?
 3. Rate limiting recommendations?
 
-These questions are for alliance discussion before finalising v0.2.
+These questions are open for community discussion before finalising v0.2.

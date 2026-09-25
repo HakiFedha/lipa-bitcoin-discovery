@@ -7,7 +7,7 @@
 - [ ] Define freshness, liveness, trust, versioning, and security principles
 - [ ] Document Nostr as the first reference transport
 - [x] Define the HTTP/API discovery transport
-- [ ] Circulate the specification among alliance members for feedback
+- [ ] Circulate the specification for community feedback
 - [ ] Finalise the Nostr tag vocabulary and transport rules
 - [ ] Prepare a Nostr community specification or NIP if appropriate
 
@@ -19,7 +19,7 @@
 - [x] Implement a provider-hosted HTTP/API discovery endpoint
 - [ ] Add interoperability tests across discovery transports
 - [x] Publish example service descriptions and discovery queries
-- [ ] Alliance members publish test service descriptions through the reference transports
+- [ ] Early contributors publish test service descriptions through the reference transports
 - [x] Test publish → discover → filter → verify round-trip flows
 
 ## Phase 3: Integration
@@ -45,14 +45,14 @@
 
 | Component | Owner | Notes |
 |-----------|-------|-------|
-| Core specification | Alliance (collaborative) | Canonical service description, queries, compatibility, security, and versioning |
-| Nostr transport | 1–2 alliance developers | Open source reference transport |
-| HTTP/API transport | 1–2 alliance developers | Open source reference transport |
-| Common discovery library | 1–2 alliance developers | Shared interface used by transport adapters |
+| Core specification | Community (collaborative) | Canonical service description, queries, compatibility, security, and versioning |
+| Nostr transport | Contributors | Open source reference transport |
+| HTTP/API transport | Contributors | Open source reference transport |
+| Common discovery library | Contributors | Shared interface used by transport adapters |
 | Provider discovery endpoint | Each provider | May use HTTP/API or another supported transport |
 | Service description publisher | Each provider | Publishes or exposes the provider service description |
 | `/health` endpoint | Each provider | Optional liveness mechanism where appropriate |
 | Trust signals | Providers, applications, and other participants | Application-specific evaluation; no mandatory universal trust score |
 | Wallet integration | Wallet teams | Uses the common discovery interface or a supported transport |
 | Provider-to-provider integration | Providers and application developers | Supports cross-border routing and service discovery |
-| Public explorer | Alliance or volunteer | A consumer of the discovery protocol, not the protocol itself |
+| Public explorer | Any contributor or volunteer | A consumer of the discovery protocol, not the protocol itself |

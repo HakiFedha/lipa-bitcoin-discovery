@@ -174,7 +174,7 @@ export interface RevocationRecord {
 
 export interface ScoreOptions {
   knownProviders?: string[];
-  alliancePubkey?: string | null;
+  anchorPubkey?: string | null;
   attestations?: AttestationRecord[];
   revocations?: RevocationRecord[];
 }
@@ -184,7 +184,7 @@ export interface ScoreResult {
   score: number;
   attestationCount: number;
   revocationCount: number;
-  breakdown: { ALLIANCE: number; PROVIDER: number; UNKNOWN: number; REVOCATION: number };
+  breakdown: { ANCHOR: number; PROVIDER: number; UNKNOWN: number; REVOCATION: number };
 }
 
 export class Publisher {
@@ -235,7 +235,7 @@ export const DEFAULT_TTL: number;
 export const DEFAULT_QUERY_LIMIT: number;
 export const MAX_HEALTH_BYTES: number;
 export const HEALTH_CONCURRENCY: number;
-export const TRUST_WEIGHTS: { ALLIANCE: number; PROVIDER: number; UNKNOWN: number; REVOCATION: number };
+export const TRUST_WEIGHTS: { ANCHOR: number; PROVIDER: number; UNKNOWN: number; REVOCATION: number };
 export const PROTOCOL_VERSION: string;
 export const FILTER_TAGS: {
   country: 'c';

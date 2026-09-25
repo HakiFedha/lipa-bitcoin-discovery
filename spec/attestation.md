@@ -14,54 +14,46 @@ An attestation is a signed Nostr event (kind 38384) where one provider vouches f
 
 | Source | Weight | Rationale |
 |--------|--------|-----------|
-| Alliance attestation | +3 | Bootstrap trust anchor (reduces to +1 at maturity) |
+| Designated anchor attestation | +3 (suggested default) | A pubkey the consuming application chooses to treat as a trust anchor |
 | Provider attestation (recognised key) | +1 | Peer trust |
 | Provider attestation (unrecognised key) | 0 | Sybil resistance |
-| Active revocation (kind 38385) | -10 | Effectively removes from results |
+| Active revocation (kind 38385) | -10 (suggested default) | Effectively removes from results |
+
+These weights are a reference default, not a protocol requirement. The protocol does not define who must operate a trust anchor or what weight it should carry, each application or community sets its own policy.
 
 ### Deterministic algorithm
 
-Every client MUST compute scores identically:
+Given a chosen set of trust-anchor pubkeys and weights, every client MUST compute scores identically:
 
 1. Fetch kind-38384 (attestations) and kind-38385 (revocations) where the `p` tag is the target.
 2. Verify each signature; discard failures.
 3. Keep events whose `p` equals the target; discard attestation self-vouches.
-4. Deduplicate by author, keeping each author's most recent event — one key counts once.
-5. Tier each author: ALLIANCE (alliance pubkey) → +3, PROVIDER (recognised) → +1, UNKNOWN → 0.
-6. `score = Σ attestation_weights − (recognised_revocations × 10)`. Revocations from unknown keys are ignored.
+4. Deduplicate by author, keeping each author's most recent event, one key counts once.
+5. Tier each author: ANCHOR (a designated anchor pubkey) → anchor weight, PROVIDER (recognised) → +1, UNKNOWN → 0.
+6. `score = Σ attestation_weights − (recognised_revocations × revocation_weight)`. Revocations from unknown keys are ignored.
 
-Display class: `score ≥ 5` trusted, `≥ 1` reliable, `≤ 0` risky.
+Display class: `score ≥ 5` trusted, `≥ 1` reliable, `≤ 0` risky. These thresholds are also reference defaults, adjustable per application.
 
 ## Sybil resistance
 
-Only attestations from recognised keys carry weight. A key is "recognised" if it belongs to a known alliance member or a provider that itself has attestations from recognised keys. This creates a chain of trust rooted in known entities.
+Only attestations from recognised keys carry weight. A key is "recognised" if the consuming application designates it as a trust anchor, or if it is a provider that itself has attestations from recognised keys. This creates a chain of trust rooted in keys the application chooses to trust, not in a protocol-defined authority.
 
-## Trust bootstrap and decentralisation
+## Trust weight is a consumer-side policy
 
-### Phase 1: Alliance-dominated (launch)
-Alliance attestation dominates (~60% of trust score).
-
-### Phase 2: Mixed trust (6–12 months)
-Providers accumulate cross-attestations. Alliance share drops to ~30%.
-
-### Phase 3: Organic trust (12+ months)
-Alliance weight reduces from +3 to +1. Trust primarily driven by peer attestations.
+The protocol does not mandate who operates a trust anchor, what weight an anchor's attestation carries, or how that weight should change over time. An application, wallet, or directory may designate one or more anchors of its own choosing (including none), assign its own weights, and adjust them as it sees fit. There is no protocol-wide bootstrap schedule, dominance phase, or maturity timeline, that would concentrate authority in whoever operates the anchor, which the protocol is designed to avoid.
 
 ## Revocations (kind 38385)
 
 ### Who can revoke
-The Alliance (via secretariat) or any individual provider (revoking their own attestation).
+Any key can publish a revocation event referencing its own prior attestation. There is no protocol-defined body with authority to revoke another participant's attestation on their behalf. If an application chooses to treat a particular anchor's revocations as carrying extra weight, that is the application's own policy, not a protocol rule.
 
 ### No anonymous negative attestations
-On-protocol negative attestations are not supported — too easy to abuse. Complaints go through the Alliance's off-protocol process.
+On-protocol negative attestations are not supported, too easy to abuse. Disputes and complaints are handled off-protocol, through whatever process the application, directory, or community involved chooses to run. The protocol itself defines no complaint or appeals process.
 
 ## Dispute resolution
 
-### Layer 1: Wallet-side tracking
-Wallets track success/failure rates per provider locally. Private and ungameable.
+### Wallet-side tracking
+Wallets can track success/failure rates per provider locally. Private and ungameable, and requires no protocol-level mechanism.
 
-### Layer 2: Alliance complaint
-Users or wallets submit complaints to the secretariat with evidence.
-
-### Layer 3: Alliance action
-Investigation → warning → downgrade → revocation. Providers can appeal.
+### Off-protocol processes
+Beyond local tracking, resolving disputes, complaints, investigations, downgrades, appeals, is left to whichever application, directory, or community the parties are using. The protocol does not define who runs this process or what authority it has.

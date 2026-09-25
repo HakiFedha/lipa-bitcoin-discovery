@@ -8,7 +8,7 @@ Five architectural risks identified during the design of the protocol, with prop
 
 **Mitigation:** Launch with a single corridor between two countries and a single wallet partner. One corridor, one demo, then expand.
 
-**Decision needed:** Does the alliance agree on the first corridor? Who commits as the first wallet partner?
+**Decision needed:** Which corridor and wallet partner does the project launch with first?
 
 ## Risk 2: Settlement is out of scope (MEDIUM)
 
@@ -28,21 +28,21 @@ Five architectural risks identified during the design of the protocol, with prop
 
 ## Risk 4: Trust centralisation (MEDIUM)
 
-**Problem:** The Alliance's attestation is worth +3 points vs +1 for individual providers. Early on, the Alliance dominates trust scores.
+**Problem:** If a single anchor's attestation carries far more weight than others, whoever operates that anchor could dominate trust scores across the ecosystem.
 
-**Mitigation:** Accepted as a bootstrap mechanism. Planned reduction: Alliance weight drops to +1 at 12 months as organic cross-attestations grow.
+**Mitigation:** The protocol does not designate a default anchor or mandate its weight. Trust-anchor selection and weighting are consumer-side policy: each application, wallet, or directory chooses its own anchor(s), if any, and sets its own weights. No protocol-wide bootstrap schedule concentrates trust in one operator by design.
 
-**Decision needed:** Does the alliance agree to the +3 bootstrap weight with planned reduction?
+**Decision needed:** None at the protocol level. Individual applications may still choose to document their own anchor policy for their users.
 
 ## Risk 5: Dispute resolution (HIGH)
 
 **Problem:** A provider takes Lightning payment but doesn't deliver mobile money. No mechanism to flag bad actors.
 
-**Mitigation:** Three-layer approach:
-1. **Wallet-side tracking** — wallets track success rates locally, deprioritise unreliable providers
-2. **Alliance complaint process** — evidence-based, 72-hour response window, graduated penalties
-3. **Revocation event (kind 38385)** — formal trust withdrawal published on-protocol
+**Mitigation:** Layered approach:
+1. **Hold invoices (LNURL settlement profile)** — for providers conforming to the [LNURL settlement profile](../spec/settlement-lnurl.md), sats are held, not captured, until fiat delivery is confirmed; a failed payout auto-refunds the payer. This prevents the described failure mode structurally, for conformant providers. Conformance is optional and not yet implemented in the reference library, it's a specified (draft) profile a provider can opt into.
+2. **Wallet-side tracking** — wallets track success rates locally, deprioritise unreliable providers. Covers non-conformant providers and any residual failures.
+3. **Revocation event (kind 38385)** — formal trust withdrawal published on-protocol by any key, in relation to its own prior attestation.
 
-No anonymous negative attestations — too easy for competitors to abuse.
+No anonymous negative attestations — too easy for competitors to abuse. Beyond these protocol-level mechanisms, disputes and complaints are handled off-protocol, through whatever process the application, directory, or community involved chooses to run.
 
-**Decision needed:** Does the alliance agree to the off-protocol complaint mechanism? Who handles disputes?
+**Decision needed:** None at the protocol level for trust/dispute mechanics. Open question: should hold-invoice conformance become a stronger signal in discovery results (e.g. surfaced to wallets) to incentivise adoption?

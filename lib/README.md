@@ -156,10 +156,10 @@ await attestation.vouch(partnerPubkey, {
 // Compute a partner's trust score
 const result = await attestation.score(partnerPubkey, {
   knownProviders: [/* pubkeys you recognise */],
-  alliancePubkey: process.env.ALLIANCE_PUBKEY   // optional anchor
+  anchorPubkey: process.env.ANCHOR_PUBKEY   // optional anchor
 });
 console.log(result);
-// { pubkey, score, attestationCount, revocationCount, breakdown: { ALLIANCE, PROVIDER, UNKNOWN, REVOCATION } }
+// { pubkey, score, attestationCount, revocationCount, breakdown: { ANCHOR, PROVIDER, UNKNOWN, REVOCATION } }
 
 // Withdraw trust (a reason is required)
 await attestation.revoke(badPubkey, 'Non-delivery after 3 confirmed complaints');
@@ -167,7 +167,7 @@ await attestation.revoke(badPubkey, 'Non-delivery after 3 confirmed complaints')
 attestation.close();
 ```
 
-**Reference scoring weights:** the optional `score()` helper uses alliance attestation `+3`, recognised provider `+1`, unknown key `0`, and active revocation `-10`. These weights are a consumer-side policy, not a universal Lipa trust rating. Unknown keys carry no weight in this reference calculation.
+**Reference scoring weights:** the optional `score()` helper uses trust-anchor attestation `+3`, recognised provider `+1`, unknown key `0`, and active revocation `-10`. These weights are a consumer-side policy, not a universal Lipa trust rating. Unknown keys carry no weight in this reference calculation.
 
 ---
 
