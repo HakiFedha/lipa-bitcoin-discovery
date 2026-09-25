@@ -226,25 +226,66 @@ New transports should map their data into the common service description rather 
 
 The service description should be sufficiently structured for software to query and compare providers while remaining extensible.
 
-A conceptual representation is:
+A provider-hosted document has two levels: document-level fields that describe the provider once, and a `services` array where each entry describes one offering. A single provider may publish multiple services (for example, a currency-exchange off-ramp and an airtime-data off-ramp) under one document.
+
+### Required Fields
+
+These fields are enforced by the reference validator. A document that omits them, or provides them in the wrong shape, is rejected.
+
+**Document level:**
+
+- `protocol`, must equal `lipa`
+- `version`, a version string
+- `provider.name`, the provider's display name
+- `provider.pubkey`, optional, but if present must be a 64-character hex string
+- `services`, a non-empty array
+
+**Per service:**
+
+- `id`, a unique identifier for the service within the document
+- `countries`, an array of country codes the service covers
+- `direction`, for example `on-ramp` or `off-ramp`
+- `service_type`, for example `currency-exchange` or `airtime-data`
+- `rails.in` / `rails.out`, the payment rails on each side of the transaction (for example, `lightning` in, `mtn-momo` out)
+- `currencies`, an array of currencies the service supports
+- `status`, `active`, `paused`, or `inactive`
+- `status_reason`, optional, only meaningful when `status` is not `active`. One of: `out_of_float`, `maintenance`, `regulatory`, `other`
+
+### Optional/Extensible Fields
+
+These are not currently enforced by the validator but are reserved for providers who wish to publish richer detail:
+
+- `limits`, minimum and maximum transaction amounts
+- `fees`, fee structure for the service
+- `kyc`, identity verification requirements, if any
+- `endpoint`, a direct API or contact endpoint for the service
+- `contact`, human contact details for the provider
+- `metadata`, free-form additional detail
+
+A conceptual representation of a document with one service is:
 
 ```text
-Provider
- ├── identity
- ├── service_id
- ├── name
- ├── country
- ├── direction
- ├── currencies
- ├── bitcoin_rails
- ├── local_rails
- ├── protocols
- ├── limits
- ├── fees
- ├── kyc
- ├── endpoint
- ├── contact
- └── metadata
+{
+  "protocol": "lipa",
+  "version": "0.3",
+  "provider": {
+    "name": "Example Provider",
+    "pubkey": "a".repeat(64)
+  },
+  "services": [
+    {
+      "id": "example-offramp-zm",
+      "countries": ["ZM"],
+      "direction": "off-ramp",
+      "service_type": "currency-exchange",
+      "rails": { "in": ["lightning"], "out": ["mtn-momo"] },
+      "currencies": ["ZMW"],
+      "status": "active"
+    }
+  ]
+}
+```
+
 
 ## 7. Nostr Reference Implementation
 
