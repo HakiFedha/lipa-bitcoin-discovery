@@ -235,6 +235,7 @@ export const DEFAULT_TTL: number;
 export const DEFAULT_QUERY_LIMIT: number;
 export const MAX_HEALTH_BYTES: number;
 export const HEALTH_CONCURRENCY: number;
+export const HEALTHY_STATUS_VALUES: string[];
 export const TRUST_WEIGHTS: { ANCHOR: number; PROVIDER: number; UNKNOWN: number; REVOCATION: number };
 export const PROTOCOL_VERSION: string;
 export const FILTER_TAGS: {
