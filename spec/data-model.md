@@ -149,7 +149,10 @@ HTTPS URL where the provider's API is reachable.
 HTTPS URL that returns liveness information.
 
 #### `status` - Current status
-`active` (operational), `maintenance` (temporarily unavailable), `offline` (not operational)
+`active` (operational), `inactive` (not operational), `paused` (temporarily unavailable)
+
+#### `status_reason` - Reason for a paused status (optional)
+Only meaningful when `status` is `paused`. One of `out_of_float`, `maintenance`, `regulatory`, `other`.
 
 ### Optional tags
 

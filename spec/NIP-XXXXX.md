@@ -33,12 +33,13 @@ The five filterable fields use single-letter tags so relays index them for serve
 | `name` | Human-readable provider name | — | `Provider A` |
 | `endpoint` | API base URL | — | `https://api.example.com` |
 | `health` | Liveness check URL | — | `https://api.example.com/health` |
-| `status` | Current status | — | `active` / `maintenance` / `offline` |
+| `status` | Current status | — | `active` / `inactive` / `paused` |
 
 **Optional tags:**
 
 | Tag | Description | Example |
 |-----|-------------|---------|
+| `status_reason` | Reason for a paused status (only when status is paused) | `out_of_float` / `maintenance` / `regulatory` / `other` |
 | `network` | Bitcoin network or environment | `mainnet` |
 | `mobile_network` | Mobile network operator | `vodacom-tz` |
 | `min_amount` | Minimum in local currency | `2500` |
