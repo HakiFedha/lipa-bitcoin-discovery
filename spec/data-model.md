@@ -134,7 +134,7 @@ ISO 3166-1 alpha-2, uppercase. Common values: `TZ`, `KE`, `NG`, `GH`, `ZA`, `UG`
 `lightning`, `on-chain`, `ecash`, `lnurl`
 
 #### `m` - Outbound payment rail (filterable)
-`m-pesa`, `mtn-momo`, `airtel-money`, `orange-money`, `bank`, `cash`
+`m-pesa`, `mtn-momo`, `airtel-money`, `orange-money`, `zamtel-money`, `lumicash`, `ihela`, `bank`, `cash`
 
 #### `f` - Fiat currency (filterable)
 ISO 4217, uppercase. Common values: `TZS`, `KES`, `NGN`, `GHS`, `ZAR`, `UGX`, `ZMW`, `RWF`

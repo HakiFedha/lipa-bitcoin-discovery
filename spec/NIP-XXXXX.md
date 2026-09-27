@@ -28,7 +28,7 @@ The five filterable fields use single-letter tags so relays index them for serve
 | `c` | Country (ISO 3166-1 alpha-2) | yes | `TZ` |
 | `o` | Direction of value flow from the customer's perspective | yes | `off-ramp` / `on-ramp` / `both` |
 | `i` | Inbound rail | yes | `lightning` / `on-chain` / `ecash` |
-| `m` | Outbound rail | yes | `m-pesa` / `mtn-momo` / `airtel-money` / `bank` / `cash` |
+| `m` | Outbound rail | yes | `m-pesa` / `mtn-momo` / `airtel-money` / `orange-money` / `zamtel-money` / `lumicash` / `ihela` / `bank` / `cash` |
 | `f` | Fiat currency (ISO 4217) | yes | `TZS` |
 | `name` | Human-readable provider name | — | `Provider A` |
 | `endpoint` | API base URL | — | `https://api.example.com` |
