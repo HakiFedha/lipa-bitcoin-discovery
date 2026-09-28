@@ -115,7 +115,7 @@ and edit the service details to match your actual service.
 | `currency` | Local currency using its ISO code, such as `KES` |
 | `endpoint` | An HTTPS URL for the provider's service or integration endpoint, if one is available |
 | `health` | An HTTPS URL that can be checked to determine whether the service is reachable and operational |
-| `fee_range` | An approximate fee range, such as `"1.5-2.2"` |
+| `fee_range` | An approximate fee range, such as `"1.5-2.2"`. Optional. If you leave it out, applications will treat your fees as unknown, not as free. |
 | `speed` | Typical processing time, such as `seconds`, `minutes`, or `hours` |
 
 Only publish URLs that you control or are authorised to provide and intend to keep available.
@@ -131,6 +131,10 @@ Run:
     node examples/publish-listing.js
 
 The publisher signs your service listing and sends it to the configured Nostr relays.
+
+Public relays are sometimes slow or unavailable, so it is normal for a publish to succeed on some relays and fail on others. The publisher lists which relays accepted your listing and which failed. Your listing can be discovered as long as at least one relay holds it, and publishing to several relays makes discovery more reliable. If a relay failed, you can run the publish command again later.
+
+You generate and hold your own publishing key. Do not send it to anyone, including HakiFedha or any other party that offers to publish for you.
 
 Once published, compatible wallets and applications can discover the service through supported Lipa Bitcoin Discovery transports.
 

@@ -25,7 +25,7 @@ Please send us information about the service or services you provide.
 | Currency | KES |
 | Minimum transaction | 10,000 KES |
 | Maximum transaction | 1,000,000 KES |
-| Fees | 1.5%–2.2% |
+| Fees | 1.5%–2.2%, or leave blank if you are not sure yet. Blank means unknown, not free. |
 | Typical speed | Seconds |
 | KYC required | Yes / No |
 | Network | Bitcoin mainnet |
@@ -83,6 +83,8 @@ Please tell us when important information changes, such as:
 - Your service is permanently discontinued.
 
 Keeping the information current helps wallets and applications make better use of your listing.
+
+If you hold your own publishing key, you can republish your listing yourself at any time. Publishing again with the same service ID replaces the earlier version.
 
 ## Live Availability And Liquidity
 
