@@ -22,9 +22,9 @@ Five architectural risks identified during the design of the protocol, with prop
 
 **Problem:** 30-minute heartbeats from 200+ providers = 9,600+ events per day per relay. Mostly identical data.
 
-**Mitigation:** Change to daily keepalive + publish-on-change. TTL extends to 25 hours. Health endpoint handles real-time liveness. Cuts traffic by ~95%.
+**Mitigation:** Default TTL is 30 days, so a listing stays visible until the provider republishes or updates it, not on a fixed heartbeat. Providers republish on change, not on a schedule, which keeps relay traffic low without a forced keepalive. Health endpoint handles real-time liveness separately. A provider can still set a shorter ttl tag on its own listing if it wants a tighter bound.
 
-**Decision needed:** 30-minute heartbeat (simpler) or daily keepalive (efficient)?
+**Decision needed:** None at the protocol level. Implemented in DEFAULT_TTL (src/config.js) and honoured per-listing via each event's ttl tag.
 
 ## Risk 4: Trust centralisation (MEDIUM)
 
