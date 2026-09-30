@@ -24,3 +24,7 @@ jobs:
       - name: Run tests
         working-directory: lib
         run: npm test
+
+      - name: Run E2E tests
+        working-directory: lib
+        run: npm run test:e2e

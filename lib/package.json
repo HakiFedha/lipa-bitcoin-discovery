@@ -10,7 +10,8 @@
     "example:query": "node examples/query-providers.js",
     "example:attest": "node examples/publish-attestation.js",
     "start:http": "node examples/start-http-server.js",
-    "start": "node examples/start-http-server.js"
+    "start": "node examples/start-http-server.js",
+    "test:e2e": "node --test test/e2e/*.test.js"
   },
   "keywords": [
     "bitcoin",
