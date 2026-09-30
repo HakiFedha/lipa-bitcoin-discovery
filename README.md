@@ -4,7 +4,7 @@
 
 > **Discovery is open. Trust is configurable. Settlement is separate.**
 
-Lipa Bitcoin Discovery is an open protocol for allowing wallets, payment applications and Bitcoin service providers to discover payment services programmatically.
+Lipa Bitcoin Discovery is an open protocol for allowing wallets, payment applications and Bitcoin service providers to discover payment services or liquidity providers programmatically.
 
 A provider can describe what it supports, such as Bitcoin to Airtel Money in Zambia, Bitcoin to M-Pesa in Kenya, Bitcoin to MTN Mobile Money in Nigeria or Ghana, or Bitcoin to Orange Money in West Africa.
 
