@@ -14,9 +14,9 @@ Five architectural risks identified during the design of the protocol, with prop
 
 **Problem:** Discovery introduces parties, but every provider has a different API. A wallet must do separate integrations for each provider. This doesn't scale.
 
-**Mitigation:** Define a standard settlement API (v0.2) with four endpoints: `/v1/quote`, `/v1/execute` (via Lightning invoice), `/v1/status`, `/v1/providers`. See [settlement-api.md](../spec/settlement-api.md) for the draft.
+**Mitigation:** Define settlement over LNURL, which wallets already speak, so a wallet can pay any conformant provider without a per-provider integration. See [settlement-lnurl.md](../spec/settlement-lnurl.md) for the draft profile.
 
-**Decision needed:** Should the settlement API be drafted in parallel with v0.1 discovery implementation?
+**Decision needed:** None on the design, which is settled as LNURL with hold invoices. Open: build order for the reference library, since nothing is implemented in `lib/src` yet.
 
 ## Risk 3: Heartbeat bandwidth at scale (LOW)
 

@@ -4,7 +4,7 @@
 
 ## Motivation
 
-Discovery finds a provider and attestation ranks it. Settlement — actually moving value — is still up to the two parties. The [standard settlement API](settlement-api.md) defines a bespoke REST flow for that, but it requires each wallet to integrate against it.
+Discovery finds a provider and attestation ranks it. Settlement, actually moving value, is still up to the two parties. Without a shared standard, every wallet has to integrate separately with every provider.
 
 This profile defines settlement over **LNURL**, which wallets in the Nostr/Lightning ecosystem already speak. A wallet that supports Lightning Addresses can pay a conformant provider it has never seen before, the moment discovery surfaces it — no per-provider integration. It turns the N×M integration problem (every wallet × every provider) into N+M (everyone speaks one standard).
 
@@ -83,7 +83,7 @@ Because a trust-ranked directory implies "listed means safe to pay," capture-on-
 
 ## Delivery confirmation (LUD-21, extended meaning)
 
-The profile uses the LUD-21 `verify` endpoint to report **fiat delivery** status, not merely Lightning settlement. The verify response maps to the shared status vocabulary from the [settlement API](settlement-api.md):
+The profile uses the LUD-21 `verify` endpoint to report **fiat delivery** status, not merely Lightning settlement. The verify response uses the following status values:
 
 | verify state | Meaning |
 |--------------|---------|
@@ -93,6 +93,22 @@ The profile uses the LUD-21 `verify` endpoint to report **fiat delivery** status
 | `failed` | Payout failed; hold cancelled; sats refunded |
 
 A wallet polls `verify` until a terminal state (`completed` / `failed`), rather than assuming success on Lightning payment alone.
+
+## Error Codes
+
+LUD-06 errors carry only a free-text `reason`. A conformant provider SHOULD add a machine-readable `code` alongside it, so wallets can decide whether to retry or re-quote without parsing prose.
+
+| Code | Meaning | Retryable |
+|------|---------|-----------|
+| `RECIPIENT_UNREACHABLE` | Phone number not registered with the payout network | No |
+| `AMOUNT_TOO_LOW` | Below the provider's minimum | No |
+| `AMOUNT_TOO_HIGH` | Above the provider's maximum | No |
+| `CAPACITY_EXCEEDED` | Provider is at capacity | Yes |
+| `NETWORK_ERROR` | Mobile money network timeout | Yes |
+| `PROVIDER_OFFLINE` | Provider is in maintenance | Yes |
+| `HOLD_EXPIRED` | Hold invoice timed out before payout completed; sats returned | Yes (new invoice) |
+
+A quote that has passed `rateExpiry` is void and needs a fresh callback request; no error code is required for that case.
 
 ## Conformance
 
