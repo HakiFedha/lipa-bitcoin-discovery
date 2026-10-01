@@ -16,7 +16,7 @@ The current reference implementation uses Nostr for decentralised discovery. The
 
 Bitcoin wallets and payment applications can send and receive Bitcoin, but they do not necessarily know which local services can connect Bitcoin to the payment systems people use every day.
 
-For example, a wallet may need to find:
+For example, a wallet, an app, or service provider may need to find:
 
 * an Airtel Money off-ramp in Zambia
 * an M-Pesa off-ramp in Kenya
@@ -24,6 +24,8 @@ For example, a wallet may need to find:
 * an Orange Money service in Senegal or Côte d'Ivoire
 * a bank-transfer service in another country
 * a Bitcoin on-ramp supporting a particular local currency
+* a liquidity provider
+* API payout providers
 
 Today, a wallet developer may need to know about each provider individually and build separate integrations or maintain its own list of providers.
 
