@@ -26,7 +26,7 @@ The fields below describe the service itself. Transport-specific representations
 
 `countries` - Countries where the service operates, using ISO 3166-1 alpha-2 country codes.
 
-`directions` - Direction of value flow from the customer's perspective: `on-ramp` means the customer provides non-Bitcoin value and receives Bitcoin; `off-ramp` means the customer provides Bitcoin and receives non-Bitcoin value or a service; `both` means the service supports both directions.
+`direction` - Direction of value flow from the customer's perspective: `on-ramp` means the customer provides non-Bitcoin value and receives Bitcoin; `off-ramp` means the customer provides Bitcoin and receives non-Bitcoin value or a service; `both` means the service supports both directions.
 
 `service_type` - The kind of service being offered: `currency-exchange` (buying or selling Bitcoin for fiat currency), `remittance` (Bitcoin sent by one party, fiat delivered to a different recipient), `airtime-data` (Bitcoin converted directly into mobile airtime or a data bundle), `bill-payment` (Bitcoin used to settle a bill or subscription), or `merchant-payment` (Bitcoin accepted directly for goods or services). Defaults to `currency-exchange` when absent, so every listing published before this field existed remains valid and correctly described without republishing.
 
@@ -40,7 +40,7 @@ The fields below describe the service itself. Transport-specific representations
 
 `health` - Optional endpoint that can be used to check whether the provider service is responding. A successful health response does not guarantee that a transaction will succeed.
 
-`status` - Current service status, such as `active`, `inactive`, or `maintenance`.
+`status` - Current service status, one of `active`, `inactive`, or `paused`. A paused service may also carry a `status_reason`.
 
 `network` - Bitcoin network or environment supported by the service, such as `mainnet` or `testnet`.
 
@@ -54,7 +54,7 @@ The fields below describe the service itself. Transport-specific representations
 
 `lnaddr` - Lightning address or related Lightning identifier where applicable.
 
-`kyc` - Information about whether identity verification is required, for example `none`, `required`, or `conditional`.
+`kyc` - Information about whether identity verification is required, one of `none`, `light` (phone number), or `full` (government ID).
 
 `ttl` - Optional freshness period for the service description. It helps applications determine when a listing may be stale and does not replace health checks or other liveness signals.
 
@@ -71,7 +71,7 @@ Providers should publish only information they are comfortable making publicly d
 
 Discovery queries are transport-independent. They allow an application to ask for services matching criteria such as country, direction, payment rail, currency, KYC requirements, status, or network.
 
-Common query fields include countries, directions, service_type, rails, currencies, kyc, status, and network.
+Common query fields include countries, direction, service_type, rails, currencies, kyc, status, and network.
 
 A transport may support only some filtering operations remotely. When necessary, a client may retrieve a broader result set and apply additional filtering locally.
 
@@ -131,10 +131,12 @@ ISO 3166-1 alpha-2, uppercase. Common values: `TZ`, `KE`, `NG`, `GH`, `ZA`, `UG`
 `currency-exchange`, `remittance`, `airtime-data`, `bill-payment`, `merchant-payment`. Absent means `currency-exchange`, so listings published before this tag existed remain valid without republishing.
 
 #### `i` - Inbound payment rail (filterable)
-`lightning`, `on-chain`, `ecash`, `lnurl`
+Any well-formed rail slug (lowercase letters, digits and hyphens). Recognised values: `lightning`, `on-chain`, `ecash`, `lnurl`, and the mobile money, bank and cash rails listed under `m`, since an on-ramp service receives value through them.
 
 #### `m` - Outbound payment rail (filterable)
-`m-pesa`, `mtn-momo`, `airtel-money`, `orange-money`, `zamtel-money`, `lumicash`, `ihela`, `bank`, `cash`
+Any well-formed rail slug (lowercase letters, digits and hyphens). Recognised values: `m-pesa`, `mtn-momo`, `airtel-money`, `orange-money`, `zamtel-money`, `lumicash`, `ihela`, `bank`, `cash`, and Bitcoin-side rails such as `lightning`, since an on-ramp service delivers Bitcoin through them.
+
+The list of recognised values is documentation only, not a gate. Publishers and queriers accept any well-formed slug, and the vocabulary is curated by the community rather than defined by the protocol.
 
 #### `f` - Fiat currency (filterable)
 ISO 4217, uppercase. Common values: `TZS`, `KES`, `NGN`, `GHS`, `ZAR`, `UGX`, `ZMW`, `RWF`
@@ -171,7 +173,7 @@ Range to protect competitive information. Example: `1.5-2.2`
 `seconds` (< 60s), `minutes` (1–30 min), `hours` (30 min to 24 hours)
 
 #### `ttl` - Time to live
-Default: `90000` (25 hours)
+Default: 30 days (`2592000` seconds). A listing's own `ttl` tag is honoured. A missing tag, or the legacy value `90000`, is treated as the 30-day default.
 
 #### `protocols` - Lightning protocol support
 Comma-separated: `bolt11`, `bolt12`, `nwc`, `lnurl`, `webln`, `keysend`
