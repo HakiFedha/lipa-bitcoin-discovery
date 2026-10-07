@@ -27,7 +27,11 @@
     "rail_out": "m-pesa",
     "network": "safaricom-ke",
     "endpoint": "https://api.providerb.example.com",
-    "status": "active"
+    "status": "active",
+    "protocols": [
+      "lnurl"
+    ],
+    "lnaddr": "{phone}@providerb.example.com"
   },
   "step_3_attestation_check": {
     "_action": "Provider A checks attestations for Provider B",
@@ -41,15 +45,14 @@
       "limit": 500
     },
     "result": {
-      "attestation_count": 5,
-      "trust_score": 8,
+      "attestation_count": 4,
       "attested_by": [
-        "Alliance (+3)",
-        "Provider C (+1)",
-        "Provider D (+1)",
-        "Provider E (+1)",
-        "Provider F (+1)"
-      ]
+        "Provider C",
+        "Provider D",
+        "Provider E",
+        "Provider F"
+      ],
+      "_note": "Provider A weighs these attestations by its own policy. The protocol defines no central trust score."
     }
   },
   "step_4_health_check": {
@@ -62,33 +65,30 @@
     }
   },
   "step_5_settlement": {
-    "_action": "Provider A calls Provider B's settlement API to execute the Kenyan leg",
-    "request": {
-      "method": "POST",
-      "url": "https://api.providerb.example.com/v1/quote",
-      "body": {
-        "direction": "off-ramp",
-        "rail_in": "lightning",
-        "rail_out": "m-pesa",
-        "amount_sats": 50000,
-        "recipient": {
-          "phone": "+254712345678",
-          "network": "safaricom-ke"
-        }
-      }
+    "_action": "Provider A pays Provider B using the LNURL off-ramp profile (spec/settlement-lnurl.md). Provider B uses a hold invoice, so the sats are captured only if the M-Pesa payout succeeds.",
+    "resolve": {
+      "_note": "Lightning Address built from the lnaddr template in Provider B's listing, with the recipient's phone number as the username",
+      "request": "GET https://providerb.example.com/.well-known/lnurlp/254712345678"
     },
-    "response": {
-      "quote_id": "q_xyz789",
-      "amount_fiat": "9500",
-      "currency": "KES",
-      "fee_fiat": "190",
-      "invoice": "lnbc500u1p...",
-      "ttl_seconds": 300
+    "invoice_request": {
+      "request": "GET <callback>?amount=50000000",
+      "response": {
+        "pr": "lnbc500u1p...",
+        "payoutCurrency": "KES",
+        "payoutAmount": "9500",
+        "feeTotal": "190",
+        "rateExpiry": 1718550300,
+        "verify": "https://providerb.example.com/lnurl/verify/abc123"
+      }
     }
   },
   "step_6_complete": {
-    "_action": "Provider A pays Provider B's Lightning invoice, Provider B delivers KES to recipient",
+    "_action": "Provider A pays the hold invoice and polls the verify URL. Provider B delivers KES to the recipient over M-Pesa, then settles the hold. If the payout fails, Provider B cancels the hold and the sats return to Provider A.",
+    "verify_states_seen": [
+      "processing",
+      "completed"
+    ],
     "status": "completed",
-    "flow": "User (TZ) \u2192 Provider A \u2192 Lightning \u2192 Provider B \u2192 M-Pesa Kenya \u2192 Recipient"
+    "flow": "User (TZ) \u2192 Provider A \u2192 Lightning (held) \u2192 Provider B \u2192 M-Pesa Kenya \u2192 Recipient"
   }
 }
