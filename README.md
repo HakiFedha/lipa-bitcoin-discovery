@@ -531,6 +531,20 @@ The repository currently contains an experimental reference implementation and d
 
 The service data model, event kinds, vocabulary, trust model and discovery interfaces may change as the protocol is tested with providers and applications.
 
+### What Works Today
+
+* A public discovery HTTP API at https://lipa-bitcoin-discovery.onrender.com, backed by Nostr relays
+* Three real providers publishing listings: BitZed (Zambia), and BitLibera and Rurbit (Burundi)
+* A JavaScript reference library for publishing and querying listings, with an automated test suite
+* A draft LNURL off-ramp settlement profile, with a tested reference implementation running against a simulated Lightning backend
+* Quickstart guides for developers and for providers
+
+### What Is Not Built Yet
+
+* Settlement against a real Lightning node. So far it is only simulated.
+* Live liquidity and capacity signals beyond the optional health endpoint
+* Listings from more providers and more countries
+
 Feedback, implementation experience and review are welcome.
 
 ## Origin
