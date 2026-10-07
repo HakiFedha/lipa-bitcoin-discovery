@@ -195,6 +195,8 @@ The wallet does not have to use Lipa for settlement.
 
 Lipa's job is to make the appropriate service discoverable.
 
+To start building, read the [Developer quickstart](docs/developer-quickstart.md).
+
 ## What Does A Provider Need To Do?
 
 A provider does not need to rebuild its existing payment infrastructure.
@@ -240,6 +242,8 @@ The provider's discovery component can publish information such as:
 * minimum and maximum amounts where appropriate
 
 The provider remains responsible for its actual service.
+
+To publish a listing, read the [Provider quickstart](docs/provider-quickstart.md).
 
 ## Provider-To-Provider Discovery
 
@@ -509,6 +513,8 @@ It does not prescribe how those parties settle transactions.
 | [Protocol specification](spec/NIP-XXXXX.md)              | Current draft protocol specification                   |
 | [Data model](spec/data-model.md)                         | Service listing fields and vocabulary                  |
 | [Attestation model](spec/attestation.md)                 | Provider attestations and trust                        |
+| [Developer quickstart](docs/developer-quickstart.md)     | Find services from a wallet, app or provider           |
+| [Provider quickstart](docs/provider-quickstart.md)       | Publish a listing and get discovered                   |
 | [Risks and mitigations](docs/risks-and-mitigations.md)   | Known risks and proposed mitigations                   |
 | [Implementation roadmap](docs/implementation-roadmap.md) | Development roadmap                                    |
 | [Examples](examples/)                                    | Example events, queries and provider-to-provider flows |
