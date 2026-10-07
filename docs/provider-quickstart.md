@@ -232,6 +232,12 @@ A published listing does not mean:
 
 Wallets and applications can use their own policies, health checks, attestations, recent activity and other trust signals when deciding which discovered services to show or use.
 
+## Finding Other Providers
+
+Providers are also potential consumers of the discovery network. For example, a provider can look up a partner in another country to complete a payout.
+
+See `docs/developer-quickstart.md` to learn how to query the network.
+
 ## Questions And Contributions
 
 For technical questions, report an issue or contribute to the project:
