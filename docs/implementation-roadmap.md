@@ -19,18 +19,25 @@
 - [x] Implement a provider-hosted HTTP/API discovery endpoint
 - [ ] Add interoperability tests across discovery transports
 - [x] Publish example service descriptions and discovery queries
-- [ ] Early contributors publish test service descriptions through the reference transports
+- [x] Early contributors publish service descriptions through the reference transports (BitZed, BitLibera and Rurbit are live)
 - [x] Test publish → discover → filter → verify round-trip flows
 
 ## Phase 3: Integration
 - [ ] Each provider integrates a discovery publisher or provider-hosted discovery endpoint
-- [ ] Each provider deploys a `/health` endpoint where appropriate
+- [ ] Each provider deploys a `/health` endpoint where appropriate (BitLibera has one; BitZed and Rurbit do not yet)
 - [ ] First wallet partner integrates discovery
 - [ ] Demonstrate discovery through both Nostr and HTTP/API
 - [ ] Demonstrate provider-to-provider discovery across a cross-border corridor
 - [x] Add optional attestations and other trust signals
 - [ ] Record and share a proof-of-concept demonstration
 
+
+## Settlement And Provider Handover
+- [x] Draft the LNURL hold-invoice settlement profile (`spec/settlement-lnurl.md`)
+- [x] Build the settlement service, LNURL web layer and self-running demo on a simulated backend
+- [ ] Build a real Lightning backend (LND on regtest first); paused by decision
+- [ ] Each provider generates its own key and takes over publishing; old listings retired
+- [ ] Resolve the open design questions in `docs/PROTOCOL-BACKLOG.md` (listing lifecycle, direction semantics) before wallet integration
 
 ## Phase 4: Production
 - [ ] Open discovery to additional providers
